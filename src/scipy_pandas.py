@@ -1,6 +1,17 @@
 ## Pandas data manipulation
 ## ========================
 
+## **Sources**:
+ 
+## - Kevin Markham: https://github.com/justmarkham/DAT4
+
+## **Data structures**
+
+## - **Series** is a one-dimensional labeled array capable of holding any data type (integers, strings, floating point numbers, Python objects, etc.). The axis labels are collectively referred to as the index. The basic method to create a Series is to call `pd.Series([1,3,5,np.nan,6,8])`
+
+## - **DataFrame** is a 2-dimensional labeled data structure with columns of potentially different types. You can think of it like a spreadsheet or SQL table, or a dict of Series objects. It stems from the `R data.frame()` object.
+
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

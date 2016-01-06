@@ -31,7 +31,7 @@ Data Manipulation and Cleaning
     :maxdepth: 2
 
     notebooks/scipy_matplotlib.rst
-    notebooks/scipy_pandas.rst
+    src/scipy_pandas.rst
 
 =========================
 Exploratory Data Analysis
