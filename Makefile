@@ -4,10 +4,14 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
+PYTORST       = python bin/conv_python_to_rst.py
 PAPER         =
 BUILDDIR      = build
 NTBOOK        = $(shell ls notebooks/*.ipynb)
-RST           = $(NTBOOK:.ipynb=.rst)
+SRC           = $(shell ls src/*.py)
+RST           = $(NTBOOK:.ipynb=.rst) $(SRC:.py=.rst)
+$(info $(RST))
+$(info $(PYTORST))
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -25,7 +29,7 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
 #$(shell find notebooks -name "*.ipynb" -exec bash -c -exec sh -c 'echo "$${1%.ipynb}.rst"' _ {} \;)
 
-.SUFFIXES: .rst .ipynb
+.SUFFIXES: .rst .ipynb .py
 
 .PHONY: help clean html dirhtml singlehtml htmlhelp epub latex latexpdf text changes linkcheck doctest coverage gettext
 
@@ -47,6 +51,9 @@ help:
 # Rule to convert notebook to rst
 .ipynb.rst:
 	ipython nbconvert --to rst $< --output $@
+
+.py.rst:
+	$(PYTORST) $<
 
 debug:
 	@echo $(RST)
