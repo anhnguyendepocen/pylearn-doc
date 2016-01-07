@@ -19,8 +19,8 @@ Python
 .. toctree::
     :maxdepth: 2
 
-    notebooks/scipy_python.rst
-    notebooks/scipy_numpy.rst
+    notebooks/tools_python.rst
+    src/tools_numpy.rst
 
 
 ==============================
@@ -30,8 +30,8 @@ Data Manipulation and Cleaning
 .. toctree::
     :maxdepth: 2
 
-    notebooks/scipy_matplotlib.rst
-    src/scipy_pandas.rst
+    notebooks/tools_matplotlib.rst
+    src/tools_pandas.rst
 
 =========================
 Exploratory Data Analysis

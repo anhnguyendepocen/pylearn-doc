@@ -5,6 +5,8 @@
  
 ## - Kevin Markham: https://github.com/justmarkham/DAT4
 
+## - Pandas doc: http://pandas.pydata.org/pandas-docs/stable/index.html
+
 ## **Data structures**
 
 ## - **Series** is a one-dimensional labeled array capable of holding any data type (integers, strings, floating point numbers, Python objects, etc.). The axis labels are collectively referred to as the index. The basic method to create a Series is to call `pd.Series([1,3,5,np.nan,6,8])`
@@ -93,6 +95,7 @@ df = users.copy()
 df.iloc[0]     # first row
 df.iloc[0, 0]  # first item of first row
 df.iloc[0, 0] = 55
+
 for i in xrange(users.shape[0]):
     row = df.iloc[i]
     row.age *= 100 # setting a copy, and not the original frame data.
@@ -105,7 +108,7 @@ df.ix[0]         # first row
 df.ix[0, "age"]  # first item of first row
 df.ix[0, "age"] = 55
 
-for i in xrange(users.shape[0]):
+for i in xrange(df.shape[0]):
     df.ix[i, "age"] *= 10
 
 print df  # df is modified
@@ -142,7 +145,8 @@ df.sort_values(by=['job', 'age'], inplace=True) # modify df
 
 df = users.append(df.iloc[0], ignore_index=True)
 
-print df.duplicated()                  # Series of booleans (True if a row is identical to a previous row)
+print df.duplicated()                  # Series of booleans 
+# (True if a row is identical to a previous row)
 df.duplicated().sum()                  # count of duplicates
 df[df.duplicated()]                    # only show duplicates
 df.age.duplicated()                    # check a single column for duplicates
@@ -179,14 +183,6 @@ df = users.copy()
 df.ix[df.height.isnull(), "height"] = df["height"].mean()
 
 
-## Exercise
-## --------
-
-## Given this modified Frame, write a function 
-## fillmissing_with_mean(df) that fill all missing value of numerical column
-## with the mean of the current columns
-
-
 ## Dealing with outliers
 ## ---------------------
 
@@ -194,15 +190,25 @@ size = pd.Series(np.random.normal(loc=175, size=20, scale=10))
 # Corrupt the first 3 measures 
 size[:3] += 500
 
-# Use the mean
-# Why 3: https://fr.wikipedia.org/wiki/Loi_normale#/media/File:Boxplot_vs_PDF.svg
+## Based on parametric statistics: use the mean
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+## Assume random variable follows the normal distribution
+## Exclude data outside 3 standard-deviations:
+## - Probability that a sample lies within 1 sd: 68.27%
+## - Probability that a sample lies within 2 sd: 99.73% (68.27 + 2 * 15.73)
+## https://fr.wikipedia.org/wiki/Loi_normale#/media/File:Boxplot_vs_PDF.svg
+
 size_outlr_mean = size.copy()
 size_outlr_mean[((size - size.mean()).abs() > 3 * size.std())] = size.mean()
 print size_outlr_mean.mean()
 
-# Median absolute deviation
-# Based on robust statistics: median
-# https://en.wikipedia.org/wiki/Median_absolute_deviation
+## Based on non-parametric statistics: use the median
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+## Median absolute deviation. Use the Median which is a robust non-parametric statistics
+## https://en.wikipedia.org/wiki/Median_absolute_deviation
+
 mad = 1.4826 * np.median(np.abs(size - size.median()))
 size_outlr_mad = size.copy()
 
@@ -213,12 +219,51 @@ print size_outlr_mad.mean(), size_outlr_mad.median()
 ## Groupby
 ## -------
 
+for grp, data in users.groupby("job"):
+    print grp, data
+
 ## File I/O
 ## --------
 
-# can read a file directly from a URL
-try:
-    users = pd.read_table('https://raw.githubusercontent.com/justmarkham/DAT4/master/data/u.user',
-                    header=None, sep='|', names=u_cols, index_col='user_id', dtype={'zip_code':str})
-except:
-    users = pd.read_table('../data/u.user', header=None, sep='|', names=u_cols, index_col='user_id', dtype={'zip_code':str})
+## csv
+## ~~~
+
+import tempfile, os.path
+tmpdir = tempfile.gettempdir()
+csv_filename = os.path.join(tmpdir, "users.csv")
+users.to_csv(csv_filename, index=False)
+other = pd.read_csv(csv_filename)
+
+## Read csv from url
+## ~~~~~~~~~~~~~~~~~
+url = 'ftp://ftp.cea.fr/pub/unati/people/educhesnay/pylearn_doc/data/salary_table.csv'
+salary = pd.read_csv(url)
+
+## Excel
+## ~~~~~
+
+xls_filename = os.path.join(tmpdir, "users.xlsx")
+users.to_excel(xls_filename, sheet_name='users', index=False)
+
+pd.read_excel(xls_filename, sheetname='users')
+
+# Multiple sheets
+with pd.ExcelWriter(xls_filename) as writer:
+    users.to_excel(writer, sheet_name='users', index=False)
+    df.to_excel(writer, sheet_name='salary', index=False)
+
+pd.read_excel(xls_filename, sheetname='users')
+pd.read_excel(xls_filename, sheetname='salary')
+
+## Exercise
+## --------
+
+## Given modified Frame provided beloow, 
+
+df = users.copy()
+df.ix[[0, 2], "age"] = None
+df.ix[[1, 3], "gender"] = None
+
+## 1. Write a function  fillmissing_with_mean(df) that fill all missing value of numerical column with the mean of the current columns.
+
+## 2) Save the original users and "imputed" frame in a single excel file "users.xlsx" with 2 sheets: original, imputed
