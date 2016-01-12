@@ -10,7 +10,7 @@ Intro
 .. toctree::
     :maxdepth: 1
 
-    intro/intro_ml.rst
+    rst/intro_ml.rst
 
 ====== 
 Python
@@ -30,8 +30,8 @@ Data Manipulation and Cleaning
 .. toctree::
     :maxdepth: 2
 
-    notebooks/tools_matplotlib.rst
     src/tools_pandas.rst
+    notebooks/tools_matplotlib.rst
 
 =========================
 Exploratory Data Analysis
@@ -40,7 +40,7 @@ Exploratory Data Analysis
 .. toctree::
     :maxdepth: 2
 
-    notebooks/stat_univar_stat.rst
+    notebooks/stat_univar.rst
     notebooks/unsuprvz_lrn_pca.rst
     notebooks/unsuprvz_lrn_clustering.rst
 
