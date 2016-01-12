@@ -3,7 +3,9 @@
 
 ## NumPy is an extension to the Python programming language, adding support for large, multi-dimensional (numerical) arrays and matrices, along with a large library of high-level mathematical functions to operate on these arrays.
 
-## Sources: Kevin Markham
+## **Sources**:
+
+## - Kevin Markham: https://github.com/justmarkham
 
 import numpy as np
 

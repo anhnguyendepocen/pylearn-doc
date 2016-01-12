@@ -3,7 +3,7 @@
 
 ## **Sources**:
  
-## - Kevin Markham: https://github.com/justmarkham/DAT4
+## - Kevin Markham: https://github.com/justmarkham
 
 ## - Pandas doc: http://pandas.pydata.org/pandas-docs/stable/index.html
 
@@ -139,6 +139,21 @@ df.sort_values(by='age', ascending=False) # use descending order instead
 df.sort_values(by=['job', 'age'])         # sort by multiple columns
 df.sort_values(by=['job', 'age'], inplace=True) # modify df
 
+## Reshaping by pivoting
+## ---------------------
+
+df = users.copy()
+h = users.ix[:, ["name", "height"]]
+h.columns = ["name", "value"]
+h['variable'] = "height"
+a = users.ix[:, ["name", "age"]]
+a.columns = ["name", "value"]
+a['variable'] = "age"
+staked = h.append(a, ignore_index=True)
+print staked
+
+print staked.pivot(index='name', columns='variable', values='value')
+
 
 ## Quality control: dudlicate data
 ## -------------------------------
@@ -182,6 +197,17 @@ df = users.copy()
 
 df.ix[df.height.isnull(), "height"] = df["height"].mean()
 
+## Rename values
+## -------------
+
+df = users.copy()
+
+print df.columns 
+df.columns = ['age', 'genre', 'travail', 'nom', 'taille']
+
+df.travail = df.travail.map({ 'student':'etudiant',  'manager':'manager', 
+                'engineer':'ingenieur', 'scientist':'scientific'})
+assert df.travail.isnull().sum() == 0
 
 ## Dealing with outliers
 ## ---------------------
