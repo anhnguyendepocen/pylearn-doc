@@ -50,20 +50,18 @@ Methodology
 
     * Understand his needs.
     * Formalize his needs into a learning problem.
-    * Define with your customer the required learning data for the project .
-    * Goto 1. until convergence of both sides.
+    * Define with your customer the learning dataset required for the project .
+    * Goto 1. until convergence of both sides (you and the customer).
 
-2. In a document formalize the project objectives the required learning dataset: input data and target variables. In this document warm the customer that the learned algorithms may not work on new data acquired under different condition.
+2. In a document formalize (i) the project objectives; (ii) the required learning dataset; More specifically the input data and the target variables. (iii) The conditions that define the acquisition of the dataset. In this document warm the customer that the learned algorithms may not work on new data acquired under different condition.
 
-3. Read your learning dataset (level D of the pyramid).
+3. Read your learning dataset (level D of the pyramid) provided by the customer.
 
-4. Clean your data (QC: Quality Control) (level I of the pyramid).
+4. Clean your data (QC: Quality Control) (reach level I of the pyramid).
 
-5. Explore data.
+5. Explore data (visualization, PCA) and perform basics univariate statistics (reach level K of the pyramid).
 
-6. Basics univariate statistics (level K of the pyramid).
-
-7. More complex multivariate-machine learning.
+7. Perform more complex multivariate-machine learning.
 
 8. Model validation. First deliverable: the predictive model with performance on training dataset.
 
