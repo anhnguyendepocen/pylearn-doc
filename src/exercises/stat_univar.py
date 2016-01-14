@@ -27,7 +27,7 @@ from scipy import stats
 import numpy as np
 y, x = salary.S, salary.X
 beta, beta0, r_value, p_value, std_err = stats.linregress(x,y)
-print "y=%f x + %f  r:%f, r-squared:%f, p-value:%f, std_err:%f" % (beta, beta0, r_value, r_value**2, p_value, std_err)
+print("y=%f x + %f  r:%f, r-squared:%f, p-value:%f, std_err:%f" % (beta, beta0, r_value, r_value**2, p_value, std_err))
 
 # plotting the line
 yhat = beta * x  +  beta0 # regression line
@@ -73,6 +73,7 @@ fval = ss_reg / (ss_res / (n - 2))
 
 ## Plot the F(1, n) distribution for 100 f values within [10, 25] 
 ## Depict P(F(1, n) > F) ie. folor the surface defined by x values larger than F beloww the F(1, n)
+from scipy.stats import f
 fvalues = np.linspace(10, 25, 100)
 
 plt.plot(fvalues, f.pdf(fvalues, 1, 30), 'b-', label="F(1, 30)")
@@ -85,7 +86,6 @@ plt.legend()
 
 ## P(F(1, n) > F) is the p-value, compute it
 
-from scipy.stats import f
 # Survival function (1 - `cdf`)
 pval = f.sf(fval, 1, n - 2)
 
@@ -95,8 +95,7 @@ pval = f.sf(fval, 1, n - 2)
 from statsmodels.formula.api import ols
 model = ols('S ~ X', salary)
 results = model.fit()
-print results.summary()
-smry.tables[0].data
+print(results.summary())
 
 ## sklearn
 import sklearn.feature_selection
