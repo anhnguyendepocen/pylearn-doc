@@ -7,6 +7,7 @@
 
 ## - Kevin Markham: https://github.com/justmarkham
 
+from __future__ import print_function
 import numpy as np
 
 ## Create arrays
@@ -44,8 +45,8 @@ float_array = int_array.astype(float)
 ## ---------
 
 matrix = np.arange(10, dtype=float).reshape((2, 5))
-print matrix.shape
-print matrix.reshape(5, 2)
+print(matrix.shape)
+print(matrix.reshape(5, 2))
 
 ## Selection
 ## ---------
@@ -86,7 +87,7 @@ arr[arr > 5]
 ## original array
 
 arr[arr > 5] = 0
-print arr
+print(arr)
 
 
 names = np.array(['Bob', 'Joe', 'Will', 'Bob'])
@@ -138,12 +139,25 @@ np.random.rand(2, 3)        # 2 x 3 matrix in [0, 1]
 np.random.randn(10)         # random normals (mean 0, sd 1)
 np.random.randint(0, 2, 10) # 10 randomly picked 0 or 1
 
-## Exercise
-## --------
+## Exercise 1: array manipulation
+## ------------------------------
 
 ## Given the array
 
-rnd = np.random.randn(4, 2) # random normals in 4x2 array
+X = np.random.randn(4, 2) # random normals in 4x2 array
 
-## Write a function min_idx_by_col(arr) that return an array of the row indices
+## Write a function argmin_axis0(arr) that return an array of the row indices
 ## of the minimiun value for each column.
+
+## Figure-out a vectorized operation that does the job.
+
+## Exercise 2: vectorized operations
+## ---------------------------------
+
+## Given the array
+
+X = np.random.randn(4, 2) # random normals in 4x2 array
+
+## Write a function standardize(X) that return an array whose columns are
+## centered and scaled (by std-dev).
+

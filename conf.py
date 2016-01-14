@@ -224,7 +224,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'MachineLearning.tex', u'Machine Learning Documentation',
+  (master_doc, 'MachineLearningPython.tex', u'Machine Learning in Python',
    u'Edouard Duchesnay', 'manual'),
 ]
 

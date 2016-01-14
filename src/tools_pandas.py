@@ -13,6 +13,7 @@
 
 ## - **DataFrame** is a 2-dimensional labeled data structure with columns of potentially different types. You can think of it like a spreadsheet or SQL table, or a dict of Series objects. It stems from the `R data.frame()` object.
 
+from __future__ import print_function
 
 import pandas as pd
 import numpy as np
@@ -96,11 +97,11 @@ df.iloc[0]     # first row
 df.iloc[0, 0]  # first item of first row
 df.iloc[0, 0] = 55
 
-for i in xrange(users.shape[0]):
+for i in range(users.shape[0]):
     row = df.iloc[i]
     row.age *= 100 # setting a copy, and not the original frame data.
 
-print df  # df is not modified
+print(df)  # df is not modified
 
 # ix supports mixed integer and label based access.
 df = users.copy()
@@ -108,10 +109,10 @@ df.ix[0]         # first row
 df.ix[0, "age"]  # first item of first row
 df.ix[0, "age"] = 55
 
-for i in xrange(df.shape[0]):
+for i in range(df.shape[0]):
     df.ix[i, "age"] *= 10
 
-print df  # df is modified
+print(df)  # df is modified
 
 ## Rows selction / filtering
 ## -------------------------
@@ -150,9 +151,9 @@ a = users.ix[:, ["name", "age"]]
 a.columns = ["name", "value"]
 a['variable'] = "age"
 staked = h.append(a, ignore_index=True)
-print staked
+print(staked)
 
-print staked.pivot(index='name', columns='variable', values='value')
+print(staked.pivot(index='name', columns='variable', values='value'))
 
 
 ## Quality control: dudlicate data
@@ -160,7 +161,7 @@ print staked.pivot(index='name', columns='variable', values='value')
 
 df = users.append(df.iloc[0], ignore_index=True)
 
-print df.duplicated()                  # Series of booleans 
+print(df.duplicated())                 # Series of booleans 
 # (True if a row is identical to a previous row)
 df.duplicated().sum()                  # count of duplicates
 df[df.duplicated()]                    # only show duplicates
@@ -202,7 +203,7 @@ df.ix[df.height.isnull(), "height"] = df["height"].mean()
 
 df = users.copy()
 
-print df.columns 
+print(df.columns)
 df.columns = ['age', 'genre', 'travail', 'nom', 'taille']
 
 df.travail = df.travail.map({ 'student':'etudiant',  'manager':'manager', 
@@ -227,7 +228,7 @@ size[:3] += 500
 
 size_outlr_mean = size.copy()
 size_outlr_mean[((size - size.mean()).abs() > 3 * size.std())] = size.mean()
-print size_outlr_mean.mean()
+print(size_outlr_mean.mean())
 
 ## Based on non-parametric statistics: use the median
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -239,14 +240,14 @@ mad = 1.4826 * np.median(np.abs(size - size.median()))
 size_outlr_mad = size.copy()
 
 size_outlr_mad[((size - size.median()).abs() > 3 * mad)] = size.median()
-print size_outlr_mad.mean(), size_outlr_mad.median()
+print(size_outlr_mad.mean(), size_outlr_mad.median())
 
 
 ## Groupby
 ## -------
 
 for grp, data in users.groupby("job"):
-    print grp, data
+    print(grp, data)
 
 ## File I/O
 ## --------

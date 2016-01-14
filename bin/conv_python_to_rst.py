@@ -19,15 +19,15 @@ if __name__ == "__main__":
         print >> sys.stderr, 'Required input file'
         sys.exit(os.EX_USAGE)
     input_filename = options.input
-    #input_filename = "/home/ed203246/git/pylearn-doc/src/scipy_pandas.py"
+    #input_filename = "/home/ed203246/git/pylearn-doc/src/tools_numpy.py"
     output_filename = os.path.splitext(input_filename)[0] + ".rst"
     input_fd = open(input_filename, 'r')
-    output_fd = open(output_filename, 'wb')
+    output_fd = open(output_filename, 'w')
     
     #line_in = '## Pandas data manipulation'
     new_block = False
     for line_in in input_fd:
-        #print line_in, len(line_in)
+        print(line_in, len(line_in))
         if len(line_in.strip()) == 0:
             output_fd.write(line_in)
         elif line_in[:len(txt_prefix)] == txt_prefix:
@@ -40,6 +40,6 @@ if __name__ == "__main__":
                 output_fd.write('    ' + line_in)
             else:
                 output_fd.write('    ' + line_in)
-    
+    #output_fd.write("toto")
     input_fd.close()
     output_fd.close()
