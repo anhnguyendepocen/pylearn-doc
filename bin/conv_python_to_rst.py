@@ -4,10 +4,10 @@ Created on Wed Jan  6 12:19:07 2016
 
 @author: edouard.duchesnay@cea.fr
 """
-
+from __future__ import print_function
 import sys, os, argparse
 
-txt_prefix = '## '
+doc_tag = "'''"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -25,21 +25,24 @@ if __name__ == "__main__":
     output_fd = open(output_filename, 'w')
     
     #line_in = '## Pandas data manipulation'
-    new_block = False
+    code_block = True
     for line_in in input_fd:
-        print(line_in, len(line_in))
-        if len(line_in.strip()) == 0:
-            output_fd.write(line_in)
-        elif line_in[:len(txt_prefix)] == txt_prefix:
-            output_fd.write(line_in[len(txt_prefix):])
-            new_block = True
+        print(line_in)
+        ## Switch state
+        if doc_tag in line_in and not code_block:  # end doc start code block
+            code_block = True
+            output_fd.write('\n') # write new line instead of doc_tag
+            #line_in = line_in.replace(doc_tag, '')
+            output_fd.write('.. code:: python\n')
+            continue
+        elif doc_tag in line_in and code_block:  # start doc end code block
+            code_block = False
+            line_in = line_in.replace(doc_tag, '')
+
+        if code_block:
+            output_fd.write('    ' + line_in)
         else:
-            if new_block:
-                output_fd.write('.. code:: python\n\n')
-                new_block = False
-                output_fd.write('    ' + line_in)
-            else:
-                output_fd.write('    ' + line_in)
-    #output_fd.write("toto")
+            output_fd.write(line_in)
+
     input_fd.close()
     output_fd.close()

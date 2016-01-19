@@ -41,8 +41,8 @@ Exploratory Data Analysis
     :maxdepth: 2
 
     notebooks/stat_univar.rst
-    notebooks/unsuprvz_lrn_pca.rst
-    notebooks/unsuprvz_lrn_clustering.rst
+    notebooks/ml_pca.rst
+    notebooks/ml_clustering.rst
 
 ===================
 Supervised learning
@@ -51,11 +51,11 @@ Supervised learning
 .. toctree::
     :maxdepth: 2
 
-    notebooks/suprvz_lrn_linear_regression.rst
-    notebooks/suprvz_lrn_linear_classification.rst
-    notebooks/suprvz_lrn_resampling.rst
-    notebooks/suprvz_lrn_linear_regularization.rst
-    notebooks/suprvz_lrn_non_linear_prediction.rst
+    notebooks/ml_linear_regression.rst
+    notebooks/ml_linear_classification.rst
+    notebooks/ml_resampling.rst
+    notebooks/ml_linear_regularization.rst
+    notebooks/ml_non_linear_prediction.rst
 
 ==================
 Indices and tables

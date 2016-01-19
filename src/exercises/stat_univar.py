@@ -27,6 +27,7 @@ from scipy import stats
 import numpy as np
 y, x = salary.S, salary.X
 beta, beta0, r_value, p_value, std_err = stats.linregress(x,y)
+
 print("y=%f x + %f  r:%f, r-squared:%f, p-value:%f, std_err:%f" % (beta, beta0, r_value, r_value**2, p_value, std_err))
 
 # plotting the line
@@ -71,6 +72,11 @@ assert np.sqrt(r2) == r_value
 n = y.size
 fval = ss_reg / (ss_res / (n - 2))
 
+'''
+- Compute the p-value:
+  * Plot the F(1,n) distribution for 100 f values within [10, 25]. Draw P(F(1,n)>F) ie. color the surface defined by x values larger than F below the F(1,n).
+  * P(F(1,n)>F) is the p-value, compute it.
+'''
 ## Plot the F(1, n) distribution for 100 f values within [10, 25] 
 ## Depict P(F(1, n) > F) ie. folor the surface defined by x values larger than F beloww the F(1, n)
 from scipy.stats import f

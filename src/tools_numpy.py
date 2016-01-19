@@ -1,17 +1,21 @@
-## Numpy
-## =====
+'''
+Numpy
+=====
 
-## NumPy is an extension to the Python programming language, adding support for large, multi-dimensional (numerical) arrays and matrices, along with a large library of high-level mathematical functions to operate on these arrays.
+NumPy is an extension to the Python programming language, adding support for large, multi-dimensional (numerical) arrays and matrices, along with a large library of high-level mathematical functions to operate on these arrays.
 
-## **Sources**:
+**Sources**:
 
-## - Kevin Markham: https://github.com/justmarkham
+- Kevin Markham: https://github.com/justmarkham
+'''
 
 from __future__ import print_function
 import numpy as np
 
-## Create arrays
-## -------------
+'''
+Create arrays
+-------------
+'''
 
 # create ndarrays from lists
 # note: every element must be the same type (will be converted if possible)
@@ -40,35 +44,42 @@ np.logspace(0, 3, 4)            # 10^0 to 10^3 (inclusive) with 4 points
 int_array = np.arange(5)
 float_array = int_array.astype(float)
 
-
-## Reshaping
-## ---------
+'''
+Reshaping
+---------
+'''
 
 matrix = np.arange(10, dtype=float).reshape((2, 5))
 print(matrix.shape)
 print(matrix.reshape(5, 2))
 
-## Selection
-## ---------
+'''
+Selection
+---------
 
-## Single item
-## ~~~~~~~~~~~
+Single item
+~~~~~~~~~~~
+'''
 
 arr1[0]         # 0th element (slices like a list)
 arr2[0, 3]      # row 0, column 3: returns 4
 arr2[0][3]      # alternative syntax
 
-## Slicing
-## ~~~~~~~
- 
+'''
+Slicing
+~~~~~~~
+'''
+
 arr2[0, :]      # row 0: returns 1d array ([1, 2, 3, 4])
 arr2[:, 0]      # column 0: returns 1d array ([1, 5])
 arr2[:, :2]     # columns strictly before index 2 (2 first columns)
 arr2[:, 2:]     # columns after index 2 included
 arr2[:, 1:4]    # columns between index 1 (included) and 4 (exluded)
 
-## Views and copies
-## ~~~~~~~~~~~~~~~~
+'''
+Views and copies
+~~~~~~~~~~~~~~~~
+'''
 
 arr = np.arange(10)
 arr[5:8]                    # returns [5, 6, 7]
@@ -78,13 +89,17 @@ arr_view[:] = 13            # modifies arr_view AND arr
 arr_copy = arr[5:8].copy()  # makes a copy instead
 arr_copy[:] = 14            # only modifies arr_copy
 
-## using boolean arrays
-## ~~~~~~~~~~~~~~~~~~~~
+'''
+using boolean arrays
+~~~~~~~~~~~~~~~~~~~~
+'''
 
 arr[arr > 5]
 
-## Boolean selection return a view wich authorizes the modification of the 
-## original array
+'''
+Boolean selection return a view wich authorizes the modification of the 
+original array
+'''
 
 arr[arr > 5] = 0
 print(arr)
@@ -97,8 +112,10 @@ names[names != 'Bob']                   # logical selection
 names[names != 'Bob'] = 'Joe'           # assign based on a logical selection
 np.unique(names)                        # set function
 
-## Vectorized operations
-## ---------------------
+'''
+Vectorized operations
+---------------------
+'''
 
 nums = np.arange(5)
 nums * 10                           # multiply each element by 10
@@ -139,25 +156,26 @@ np.random.rand(2, 3)        # 2 x 3 matrix in [0, 1]
 np.random.randn(10)         # random normals (mean 0, sd 1)
 np.random.randint(0, 2, 10) # 10 randomly picked 0 or 1
 
-## Exercise 1: array manipulation
-## ------------------------------
+'''
+Exercise 1: array manipulation
+------------------------------
 
-## Given the array
-
-X = np.random.randn(4, 2) # random normals in 4x2 array
-
-## Write a function argmin_axis0(arr) that return an array of the row indices
-## of the minimiun value for each column.
-
-## Figure-out a vectorized operation that does the job.
-
-## Exercise 2: vectorized operations
-## ---------------------------------
-
-## Given the array
+Given the array
 
 X = np.random.randn(4, 2) # random normals in 4x2 array
 
-## Write a function standardize(X) that return an array whose columns are
-## centered and scaled (by std-dev).
+Write a function argmin_axis0(arr) that return an array of the row indices
+of the minimiun value for each column.
 
+Figure-out a vectorized operation that does the job.
+
+Exercise 2: vectorized operations
+---------------------------------
+
+Given the array
+
+X = np.random.randn(4, 2) # random normals in 4x2 array
+
+Write a function standardize(X) that return an array whose columns are
+centered and scaled (by std-dev).
+'''

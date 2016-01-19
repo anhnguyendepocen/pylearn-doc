@@ -2,6 +2,8 @@
 Resources
 ---------
 
+ftp://ftp.cea.fr/pub/unati/people/educhesnay/pylearn_doc/MachineLearningPython.pdf
+
 https://github.com/scipy-lectures/scipy-lecture-notes
 
 https://github.com/justmarkham/DAT4

@@ -1,17 +1,19 @@
-## Pandas data manipulation
-## ========================
+'''
+Pandas data manipulation
+========================
 
-## **Sources**:
+**Sources**:
  
-## - Kevin Markham: https://github.com/justmarkham
+- Kevin Markham: https://github.com/justmarkham
 
-## - Pandas doc: http://pandas.pydata.org/pandas-docs/stable/index.html
+- Pandas doc: http://pandas.pydata.org/pandas-docs/stable/index.html
 
-## **Data structures**
+**Data structures**
 
-## - **Series** is a one-dimensional labeled array capable of holding any data type (integers, strings, floating point numbers, Python objects, etc.). The axis labels are collectively referred to as the index. The basic method to create a Series is to call `pd.Series([1,3,5,np.nan,6,8])`
+- **Series** is a one-dimensional labeled array capable of holding any data type (integers, strings, floating point numbers, Python objects, etc.). The axis labels are collectively referred to as the index. The basic method to create a Series is to call `pd.Series([1,3,5,np.nan,6,8])`
 
-## - **DataFrame** is a 2-dimensional labeled data structure with columns of potentially different types. You can think of it like a spreadsheet or SQL table, or a dict of Series objects. It stems from the `R data.frame()` object.
+- **DataFrame** is a 2-dimensional labeled data structure with columns of potentially different types. You can think of it like a spreadsheet or SQL table, or a dict of Series objects. It stems from the `R data.frame()` object.
+'''
 
 from __future__ import print_function
 
@@ -19,8 +21,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-## Create DataFrame
-## ----------------
+'''
+Create DataFrame
+----------------
+'''
 
 columns = ['name', 'age', 'gender', 'job']
 
@@ -36,15 +40,18 @@ user3 = pd.DataFrame(dict(name=['peter', 'julie'],
                           age=[33, 44], gender=['M', 'F'], 
                           job=['engineer', 'scientist']))
 
-
-## Concatenate DataFrame
-## ---------------------
+'''
+Concatenate DataFrame
+---------------------
+'''
 
 user1.append(user2)
 users = pd.concat([user1, user2, user3])
 
-## Join DataFrame
-## --------------
+'''
+Join DataFrame
+--------------
+'''
 
 user4 = pd.DataFrame(dict(name=['alice', 'john', 'eric', 'julie'],
                           height=[165, 180, 175, 171]))
@@ -55,8 +62,10 @@ pd.merge(users, user4, on="name")
 # Use union of keys from both frames
 users = pd.merge(users, user4, on="name", how='outer')
 
-## Summarizing
-## -----------
+'''
+Summarizing
+-----------
+'''
 
 # examine the users data
 users                   # print the first 30 and last 30 rows
@@ -75,8 +84,10 @@ users.info()            # concise summary (includes memory usage as of pandas 0.
 users.describe(include='all')       # describe all Series
 users.describe(include=['object'])  # limit to one (or more) types
 
-## Columns selection
-## -----------------
+'''
+Columns selection
+-----------------
+'''
 
 users['gender']         # select one column
 type(users['gender'])   # Series
@@ -88,8 +99,10 @@ my_cols = ['age', 'gender']     # or, create a list...
 users[my_cols]                  # ...and use that list to select columns
 type(users[my_cols])            # DataFrame
 
-## Rows selection
-## --------------
+'''
+Rows selection
+--------------
+'''
 
 # iloc is strictly integer position based
 df = users.copy()
@@ -114,8 +127,10 @@ for i in range(df.shape[0]):
 
 print(df)  # df is modified
 
-## Rows selction / filtering
-## -------------------------
+'''
+Rows selction / filtering
+-------------------------
+'''
 
 # simple logical filtering
 users[users.age < 20]        # only show users with age < 20
@@ -128,9 +143,10 @@ users[users.age < 20][['age', 'job']]           # select multiple columns
 users[(users.age > 20) & (users.gender=='M')]   # use multiple conditions
 users[users.job.isin(['student', 'engineer'])]  # filter specific values
 
-
-## Sorting
-## -------
+'''
+Sorting
+-------
+'''
 
 df = users.copy()
 
@@ -140,8 +156,10 @@ df.sort_values(by='age', ascending=False) # use descending order instead
 df.sort_values(by=['job', 'age'])         # sort by multiple columns
 df.sort_values(by=['job', 'age'], inplace=True) # modify df
 
-## Reshaping by pivoting
-## ---------------------
+'''
+Reshaping by pivoting
+---------------------
+'''
 
 df = users.copy()
 h = users.ix[:, ["name", "height"]]
@@ -155,9 +173,10 @@ print(staked)
 
 print(staked.pivot(index='name', columns='variable', values='value'))
 
-
-## Quality control: dudlicate data
-## -------------------------------
+'''
+Quality control: dudlicate data
+-------------------------------
+'''
 
 df = users.append(df.iloc[0], ignore_index=True)
 
@@ -169,9 +188,10 @@ df.age.duplicated()                    # check a single column for duplicates
 df.duplicated(['age', 'gender']).sum() # specify columns for finding duplicates
 df = df.drop_duplicates()              # drop duplicate rows
 
-
-## Quality control: missing data
-## -----------------------------
+'''
+Quality control: missing data
+-----------------------------
+'''
 
 # missing values are often just excluded
 df = users.copy()
@@ -198,8 +218,10 @@ df = users.copy()
 
 df.ix[df.height.isnull(), "height"] = df["height"].mean()
 
-## Rename values
-## -------------
+'''
+Rename values
+-------------
+'''
 
 df = users.copy()
 
@@ -210,31 +232,38 @@ df.travail = df.travail.map({ 'student':'etudiant',  'manager':'manager',
                 'engineer':'ingenieur', 'scientist':'scientific'})
 assert df.travail.isnull().sum() == 0
 
-## Dealing with outliers
-## ---------------------
+'''
+Dealing with outliers
+---------------------
+'''
 
 size = pd.Series(np.random.normal(loc=175, size=20, scale=10))
 # Corrupt the first 3 measures 
 size[:3] += 500
 
-## Based on parametric statistics: use the mean
-## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'''
+Based on parametric statistics: use the mean
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-## Assume random variable follows the normal distribution
-## Exclude data outside 3 standard-deviations:
-## - Probability that a sample lies within 1 sd: 68.27%
-## - Probability that a sample lies within 2 sd: 99.73% (68.27 + 2 * 15.73)
-## https://fr.wikipedia.org/wiki/Loi_normale#/media/File:Boxplot_vs_PDF.svg
+Assume random variable follows the normal distribution
+Exclude data outside 3 standard-deviations:
+- Probability that a sample lies within 1 sd: 68.27%
+- Probability that a sample lies within 2 sd: 99.73% (68.27 + 2 * 15.73)
+https://fr.wikipedia.org/wiki/Loi_normale#/media/File:Boxplot_vs_PDF.svg
+'''
 
 size_outlr_mean = size.copy()
 size_outlr_mean[((size - size.mean()).abs() > 3 * size.std())] = size.mean()
 print(size_outlr_mean.mean())
 
-## Based on non-parametric statistics: use the median
-## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-## Median absolute deviation. Use the Median which is a robust non-parametric statistics
-## https://en.wikipedia.org/wiki/Median_absolute_deviation
+'''
+Based on non-parametric statistics: use the median
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Median absolute deviation. Use the Median which is a robust non-parametric statistics
+https://en.wikipedia.org/wiki/Median_absolute_deviation
+'''
 
 mad = 1.4826 * np.median(np.abs(size - size.median()))
 size_outlr_mad = size.copy()
@@ -243,17 +272,24 @@ size_outlr_mad[((size - size.median()).abs() > 3 * mad)] = size.median()
 print(size_outlr_mad.mean(), size_outlr_mad.median())
 
 
-## Groupby
-## -------
+'''
+Groupby
+-------
+
+'''
 
 for grp, data in users.groupby("job"):
     print(grp, data)
 
-## File I/O
-## --------
+'''
+File I/O
+--------
+'''
 
-## csv
-## ~~~
+'''
+csv
+~~~
+'''
 
 import tempfile, os.path
 tmpdir = tempfile.gettempdir()
@@ -261,13 +297,18 @@ csv_filename = os.path.join(tmpdir, "users.csv")
 users.to_csv(csv_filename, index=False)
 other = pd.read_csv(csv_filename)
 
-## Read csv from url
-## ~~~~~~~~~~~~~~~~~
+'''
+Read csv from url
+~~~~~~~~~~~~~~~~~
+'''
+
 url = 'ftp://ftp.cea.fr/pub/unati/people/educhesnay/pylearn_doc/data/salary_table.csv'
 salary = pd.read_csv(url)
 
-## Excel
-## ~~~~~
+'''
+Excel
+~~~~~
+'''
 
 xls_filename = os.path.join(tmpdir, "users.xlsx")
 users.to_excel(xls_filename, sheet_name='users', index=False)
@@ -282,15 +323,19 @@ with pd.ExcelWriter(xls_filename) as writer:
 pd.read_excel(xls_filename, sheetname='users')
 pd.read_excel(xls_filename, sheetname='salary')
 
-## Exercise
-## --------
+'''
+Exercise
+--------
 
-## Given modified Frame provided beloow, 
+Given modified Frame provided beloow, 
+'''
 
 df = users.copy()
 df.ix[[0, 2], "age"] = None
 df.ix[[1, 3], "gender"] = None
 
-## 1. Write a function  fillmissing_with_mean(df) that fill all missing value of numerical column with the mean of the current columns.
+'''
+1. Write a function  fillmissing_with_mean(df) that fill all missing value of numerical column with the mean of the current columns.
 
-## 2) Save the original users and "imputed" frame in a single excel file "users.xlsx" with 2 sheets: original, imputed
+2) Save the original users and "imputed" frame in a single excel file "users.xlsx" with 2 sheets: original, imputed
+'''
