@@ -11,7 +11,7 @@ doc_tag = "'''"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('input', help='Input pyhton file')
+    parser.add_argument('input', help='Input python file')
 
     options = parser.parse_args()
 
