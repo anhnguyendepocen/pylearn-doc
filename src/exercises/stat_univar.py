@@ -1,13 +1,60 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jan 12 10:50:14 2016
-
-@author: ed203246
-"""
-
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 %matplotlib inline
+
+'''
+###  One sample t-test (no IV)
+
+- 
+Given the following samples, test whether its true mean is 1.75.
+Warning, when computing the std or the variance set ddof=1. The default
+value 0, leads to the biased estimator of the variance.
+
+'''
+import scipy.stats as stats
+np.random.seed(seed=42)  # make example reproducible
+n = 100
+x = np.random.normal(loc=1.78, scale=.1, size=n)
+
+'''
+- Compute the t-value (tval)
+
+- Plot the T(n-1) distribution for 100 tvalues values within [0, 10]. Draw P(T(n-1)>tval) 
+  ie. color the surface defined by x values larger than tval below the T(n-1).
+  Using the code.
+
+- Compute the p-value: P(T(n-1)>tval).
+
+- The p-value is one-sided: a two-sided test would test P(T(n-1) > tval)
+  and P(T(n-1) < -tval). What would be the two sided p-value ?
+  
+- Compare the two-sided p-value with the one obtained by stats.ttest_1samp
+using assert np.allclose(arr1, arr2)
+'''
+
+
+xbar, s, xmu, = np.mean(x), np.std(x, ddof=1), 1.75
+
+tval = (xbar - xmu) / (s / np.sqrt(n))
+
+tvalues = np.linspace(-10, 10, 100)
+plt.plot(tvalues, stats.t.pdf(tvalues, n-1), 'b-', label="T(n-1)")
+upper_tval_tvalues = tvalues[tvalues > tval]
+plt.fill_between(upper_tval_tvalues, 0, stats.t.pdf(upper_tval_tvalues, n-1), alpha=.8)
+plt.legend()
+
+# Survival function (1 - `cdf`)
+pval = stats.t.sf(tval, n - 1)
+
+pval2sided = pval * 2
+# do it with stat model
+assert np.allclose((tval, pval2sided), stats.ttest_1samp(x, xmu))
+
+'''
+## Simple linear regression (one continuous independant variable (IV))
+'''
+
 
 url = 'ftp://ftp.cea.fr/pub/unati/people/educhesnay/pylearn_doc/data/salary_table.csv'
 salary = pd.read_csv(url)
@@ -23,7 +70,7 @@ salary.M = salary.M.map({0:'N', 1:'Y'})
 ## M: management (1=management, 0=not management)
 
 
-from scipy import stats
+from scipy.stats as stats
 import numpy as np
 y, x = salary.S, salary.X
 beta, beta0, r_value, p_value, std_err = stats.linregress(x,y)
@@ -77,9 +124,8 @@ fval = ss_reg / (ss_res / (n - 2))
   * Plot the F(1,n) distribution for 100 f values within [10, 25]. Draw P(F(1,n)>F) ie. color the surface defined by x values larger than F below the F(1,n).
   * P(F(1,n)>F) is the p-value, compute it.
 '''
-## Plot the F(1, n) distribution for 100 f values within [10, 25] 
-## Depict P(F(1, n) > F) ie. folor the surface defined by x values larger than F beloww the F(1, n)
-from scipy.stats import f
+
+from scipy.stats as stats
 fvalues = np.linspace(10, 25, 100)
 
 plt.plot(fvalues, f.pdf(fvalues, 1, 30), 'b-', label="F(1, 30)")
@@ -90,11 +136,9 @@ plt.fill_between(upper_fval_fvalues, 0, f.pdf(upper_fval_fvalues, 1, 30), alpha=
 # pdf(x, df1, df2): Probability density function at x of the given RV.
 plt.legend()
 
-## P(F(1, n) > F) is the p-value, compute it
 
 # Survival function (1 - `cdf`)
 pval = f.sf(fval, 1, n - 2)
-
 
 
 ## With statmodels
