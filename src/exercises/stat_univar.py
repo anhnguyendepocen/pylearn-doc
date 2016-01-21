@@ -2,6 +2,36 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 %matplotlib inline
+np.random.seed(seed=42)  # make example reproducible
+
+
+'''
+## Estimator of main statistical measures
+
+- Generate 2 ramdom samples $x \sim(1.78, 0.1)$, $y \sim(1.66, 0.1)$ both of size 10.
+
+- Compute xbar $\bar{x}, \sigma_x, \sigma_{xy}$ using only `np.sum()` operation. 
+Explore `np.` module to find out the numpy functions that does the same 
+computations and compare them (using `assert`) with your previous results.
+'''
+n = 10
+x  = np.random.normal(loc=1.78, scale=.1, size=n)
+y  = np.random.normal(loc=1.78, scale=.1, size=n)
+
+xbar = np.sum(x) / n
+assert np.mean(x) == xbar
+
+xvar = np.sum((x - xbar) ** 2) / (n - 1)
+assert np.var(x, ddof=1) == xvar
+
+ybar = np.sum(y) / n
+xycov = np.sum((x - xbar) * (y - ybar)) / (n - 1)
+
+xy = np.vstack((x, y))
+Cov = np.cov(xy, ddof=1)  # or bias = True is the default behavior 
+assert Cov[0, 0] == xvar
+assert Cov[0, 1] == xycov
+assert np.all(np.cov(xy, ddof=1) == np.cov(xy))
 
 '''
 ###  One sample t-test (no IV)
@@ -13,7 +43,6 @@ value 0, leads to the biased estimator of the variance.
 
 '''
 import scipy.stats as stats
-np.random.seed(seed=42)  # make example reproducible
 n = 100
 x = np.random.normal(loc=1.78, scale=.1, size=n)
 
@@ -30,7 +59,7 @@ x = np.random.normal(loc=1.78, scale=.1, size=n)
   and P(T(n-1) < -tval). What would be the two sided p-value ?
   
 - Compare the two-sided p-value with the one obtained by stats.ttest_1samp
-using assert np.allclose(arr1, arr2)
+using `assert np.allclose(arr1, arr2)`
 '''
 
 
@@ -48,8 +77,64 @@ plt.legend()
 pval = stats.t.sf(tval, n - 1)
 
 pval2sided = pval * 2
-# do it with stat model
+# do it with sicpy
 assert np.allclose((tval, pval2sided), stats.ttest_1samp(x, xmu))
+
+
+'''
+###  Two sample t-test (no IV)
+
+Given the following two sample, test whether their means are equals.
+
+'''
+import scipy.stats as stats
+nx, ny = 50, 25
+x = np.random.normal(loc=1.76, scale=.1, size=nx)
+y = np.random.normal(loc=1.70, scale=.12, size=ny)
+
+'''
+- Compute the t-value.
+'''
+
+xbar, ybar = np.mean(x), np.mean(y)
+xvar, yvar = np.var(x, ddof=1), np.var(y, ddof=1)
+
+tval = (xbar - ybar) / np.sqrt(xvar / nx + yvar / ny)
+
+stats.ttest_ind(x, y, equal_var=False)
+
+tval
+
+'''
+Use the following function to approximate the df neede for the p-value
+'''
+
+def unequal_var_ttest_df(v1, n1, v2, n2):
+    vn1 = v1 / n1
+    vn2 = v2 / n2
+    df = (vn1 + vn2)**2 / (vn1**2 / (n1 - 1) + vn2**2 / (n2 - 1))
+    return df
+
+df = unequal_var_ttest_df(xvar, nx, yvar, ny)
+
+'''
+- Compute the p-value.
+
+- The p-value is one-sided: a two-sided test would test P(T > tval)
+  and P(T < -tval). What would be the two sided p-value ?
+'''
+
+pval = stats.t.sf(tval, df)
+pval2sided = pval * 2
+
+
+'''
+- Compare the two-sided p-value with the one obtained by stats.ttest_ind
+using `assert np.allclose(arr1, arr2)`
+'''
+# do it with sicpy
+assert np.allclose((tval, pval2sided), stats.ttest_ind(x, y, equal_var=False))
+
 
 '''
 ## Simple linear regression (one continuous independant variable (IV))

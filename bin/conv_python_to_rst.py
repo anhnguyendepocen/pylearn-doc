@@ -27,7 +27,7 @@ if __name__ == "__main__":
     #line_in = '## Pandas data manipulation'
     code_block = True
     for line_in in input_fd:
-        print(line_in)
+        #print(line_in)
         ## Switch state
         if doc_tag in line_in and not code_block:  # end doc start code block
             code_block = True
