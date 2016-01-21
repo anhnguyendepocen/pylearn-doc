@@ -10,4 +10,7 @@
 *.pdf
 .*.swp
 .ipynb_checkpoints
-
+notebooks/*.rst
+src/*.rst
+.spyderproject
+build/
