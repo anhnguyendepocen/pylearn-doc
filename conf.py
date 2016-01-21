@@ -48,7 +48,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Machine Learning'
+project = u'Machine Learning in Python'
 copyright = u'2015, Edouard Duchesnay'
 author = u'Edouard Duchesnay'
 
@@ -76,7 +76,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ["notebooks/notebooks"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -254,7 +254,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'machinelearning', u'Machine Learning Documentation',
+    (master_doc, 'machinelearning', u'Machine Learning in Python',
      [author], 1)
 ]
 
@@ -268,7 +268,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'MachineLearning', u'Machine Learning Documentation',
+  (master_doc, 'MachineLearning', u'Machine Learning in Python',
    author, 'MachineLearning', 'One line description of project.',
    'Miscellaneous'),
 ]

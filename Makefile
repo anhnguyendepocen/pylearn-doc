@@ -63,6 +63,8 @@ rst: $(RST)
 
 clean:
 	rm -rf $(BUILDDIR)/*
+	rm -f $(RST)
+
 
 html: rst
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
