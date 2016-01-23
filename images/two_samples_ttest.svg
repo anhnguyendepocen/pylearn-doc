@@ -17,9 +17,9 @@
    id="svg2"
    inkscape:version="0.91 r13725"
    sodipodi:docname="two_samples_ttest.svg"
-   inkscape:export-filename="/home/ed203246/git/pylearn-doc/images/two_samples_ttest.svg.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/ed203246/git/pylearn-doc/images/two_samples_ttest.png"
+   inkscape:export-xdpi="200"
+   inkscape:export-ydpi="200">
   <metadata
      id="metadata588">
     <rdf:RDF>
@@ -50,7 +50,7 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="1.7284832"
-     inkscape:cx="58.107195"
+     inkscape:cx="-82.767764"
      inkscape:cy="135.625"
      inkscape:window-x="65"
      inkscape:window-y="24"
