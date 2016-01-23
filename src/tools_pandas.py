@@ -1,6 +1,10 @@
 '''
-Pandas data manipulation
-========================
+Pandas: Data Manipulation
+=========================
+
+It is often said that 80% of data analysis is spent on the cleaning and 
+preparing data. To get a handle on the problem, this chapter focuses on a
+small, but important, aspect of data manipulation and cleaning with Pandas.
 
 **Sources**:
  
@@ -161,17 +165,39 @@ Reshaping by pivoting
 ---------------------
 '''
 
-df = users.copy()
-h = users.ix[:, ["name", "height"]]
-h.columns = ["name", "value"]
-h['variable'] = "height"
-a = users.ix[:, ["name", "age"]]
-a.columns = ["name", "value"]
-a['variable'] = "age"
-staked = h.append(a, ignore_index=True)
+# “Unpivots” a DataFrame from wide format to long (stacked) format,
+staked = pd.melt(users, id_vars="name", var_name="variable", value_name="value")
 print(staked)
 
+#     name variable      value
+#0   alice      age         19
+#1    john      age         26
+#2    eric      age         22
+#3    paul      age         58
+#4   peter      age         33
+#5   julie      age         44
+#6   alice   gender          F
+#             ...
+#11  julie   gender          F
+#12  alice      job    student
+#             ...
+#17  julie      job  scientist
+#18  alice   height        165
+#             ...
+#23  julie   height        171
+
+# “pivots” a DataFrame from long (stacked) format to wide format,
 print(staked.pivot(index='name', columns='variable', values='value'))
+
+#variable age gender height        job
+#name                                 
+#alice     19      F    165    student
+#eric      22      M    175    student
+#john      26      M    180    student
+#julie     44      F    171  scientist
+#paul      58      F    NaN    manager
+#peter     33      M    NaN   engineer
+
 
 '''
 Quality control: dudlicate data
@@ -302,7 +328,7 @@ Read csv from url
 ~~~~~~~~~~~~~~~~~
 '''
 
-url = 'ftp://ftp.cea.fr/pub/unati/people/educhesnay/pylearn_doc/data/salary_table.csv'
+url = 'https://raw.github.com/duchesnay/pylearn-doc/master/data/salary_table.csv'
 salary = pd.read_csv(url)
 
 '''

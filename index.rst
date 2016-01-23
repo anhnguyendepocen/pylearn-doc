@@ -12,15 +12,15 @@ Intro
 
     rst/intro_ml.rst
 
-====== 
-Python
-======
+#======================
+#Introduction to Python
+#======================
 
 .. toctree::
     :maxdepth: 2
 
     notebooks/tools_python.rst
-    src/tools_numpy.rst
+
 
 
 ==============================
@@ -30,6 +30,7 @@ Data Manipulation and Cleaning
 .. toctree::
     :maxdepth: 2
 
+    src/tools_numpy.rst
     src/tools_pandas.rst
     notebooks/tools_matplotlib.rst
 

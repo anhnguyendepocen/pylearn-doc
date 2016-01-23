@@ -99,8 +99,9 @@ y = np.random.normal(loc=1.70, scale=.12, size=ny)
 xbar, ybar = np.mean(x), np.mean(y)
 xvar, yvar = np.var(x, ddof=1), np.var(y, ddof=1)
 
-tval = (xbar - ybar) / np.sqrt(xvar / nx + yvar / ny)
+se = np.sqrt(xvar / nx + yvar / ny)
 
+tval = (xbar - ybar) / se
 stats.ttest_ind(x, y, equal_var=False)
 
 tval
@@ -135,13 +136,41 @@ using `assert np.allclose(arr1, arr2)`
 # do it with sicpy
 assert np.allclose((tval, pval2sided), stats.ttest_ind(x, y, equal_var=False))
 
+'''
+Plot of the two sample t-test
+'''
+xjitter = np.random.normal(loc=-1, size=len(x), scale=.01)
+yjitter = np.random.normal(loc=+1, size=len(y), scale=.01)
+plt.plot(xjitter, x, "ob", alpha=.5)
+plt.plot(yjitter, y, "ob", alpha=.5)
+plt.plot([-1, +1], [xbar, ybar], "or", markersize=15)
+
+#left, left + width, bottom, bottom + height
+#plt.bar(left=0, height=se, width=0.1, bottom=ybar-se/2)
+## effect size error bar
+plt.errorbar(-.1, ybar + (xbar - ybar) / 2, yerr=(xbar - ybar) / 2, 
+             elinewidth=3, capsize=5, markeredgewidth=3,
+             color='r')
+
+plt.errorbar([-.8, .8], [xbar, ybar], yerr=np.sqrt([xvar, yvar]) / 2, 
+             elinewidth=3, capsize=5, markeredgewidth=3,
+             color='b')
+
+plt.errorbar(.1, ybar, yerr=se / 2, 
+             elinewidth=3, capsize=5, markeredgewidth=3,
+             color='b')
+
+plt.savefig("/tmp/two_samples_ttest.svg")
+#plt.savefig("/tmp/two_samples_ttest.png")
+
+plt.clf()
 
 '''
 ## Simple linear regression (one continuous independant variable (IV))
 '''
 
 
-url = 'ftp://ftp.cea.fr/pub/unati/people/educhesnay/pylearn_doc/data/salary_table.csv'
+url = 'https://raw.github.com/duchesnay/pylearn-doc/master/data/salary_table.csv'
 salary = pd.read_csv(url)
 salary.E = salary.E.map({1:'Bachelor', 2:'Master', 3:'Ph.D'})
 salary.M = salary.M.map({0:'N', 1:'Y'})
