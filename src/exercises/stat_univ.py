@@ -130,7 +130,7 @@ pval2sided = pval * 2
 
 
 '''
-- Compare the two-sided p-value with the one obtained by stats.ttest_ind
+- Compare the two-sided p-value with the one obtained by `stats.ttest_ind`
 using `assert np.allclose(arr1, arr2)`
 '''
 # do it with sicpy
@@ -161,9 +161,48 @@ plt.errorbar(.1, ybar, yerr=se / 2,
              color='b')
 
 plt.savefig("/tmp/two_samples_ttest.svg")
-#plt.savefig("/tmp/two_samples_ttest.png")
-
 plt.clf()
+
+'''
+Anova
+
+Perform an Anova on the following dataset.
+- Compute between and within variances
+- Compute fval
+- Compare the p-value with the one obtained by `stats.f_oneway`
+using `assert np.allclose(arr1, arr2)`
+'''
+import scipy.stats as stats
+
+# dataset
+mu_k = np.array([1, 2, 3])    # means of 3 samples
+sd_k = np.array([1, 1, 1])    # sd of 3 samples
+n_k = np.array([10, 20, 30])  # sizes of 3 samples
+grp = [0, 1, 2]               # group labels
+n = np.sum(n_k)
+label = np.hstack([[k] * n_k[k] for k in [0, 1, 2]])
+
+y = np.zeros(n)
+for k in grp:
+    y[label == k] = np.random.normal(mu_k[k], sd_k[k], n_k[k])
+
+# estimate parameters
+ybar_k = np.zeros(3)
+
+ybar = y.mean()
+for k in grp:
+    ybar_k[k] = np.mean(y[label == k])
+
+
+betweenvar = np.sum([n_k[k] * (ybar_k[k] - ybar) ** 2 for k in grp]) / (len(grp) - 1)
+withinvar = np.sum([np.sum((y[label==k] - ybar_k[k]) ** 2) for k in grp]) / (n - len(grp))
+
+fval = betweenvar / withinvar
+# Survival function (1 - `cdf`)
+pval = stats.f.sf(fval, (len(grp) - 1), n - len(grp))
+
+assert np.allclose((fval, pval), 
+                   stats.f_oneway(y[label == 0], y[label == 1], y[label == 2]))
 
 '''
 ## Simple linear regression (one continuous independant variable (IV))
@@ -252,7 +291,7 @@ plt.legend()
 
 
 # Survival function (1 - `cdf`)
-pval = f.sf(fval, 1, n - 2)
+pval = stats.f.sf(fval, 1, n - 2)
 
 
 ## With statmodels

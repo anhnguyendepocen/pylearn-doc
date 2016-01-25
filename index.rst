@@ -39,9 +39,9 @@ Exploratory Data Analysis
 =========================
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
-    notebooks/stat_univar.rst
+    notebooks/stat_univ.rst
     notebooks/ml_pca.rst
     notebooks/ml_clustering.rst
 
