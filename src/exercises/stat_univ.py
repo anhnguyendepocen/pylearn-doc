@@ -92,6 +92,9 @@ nx, ny = 50, 25
 x = np.random.normal(loc=1.76, scale=.1, size=nx)
 y = np.random.normal(loc=1.70, scale=.12, size=ny)
 
+# Compute with scipy
+tval, pval = stats.ttest_ind(x, y, equal_var=False)
+
 '''
 - Compute the t-value.
 '''
@@ -102,9 +105,6 @@ xvar, yvar = np.var(x, ddof=1), np.var(y, ddof=1)
 se = np.sqrt(xvar / nx + yvar / ny)
 
 tval = (xbar - ybar) / se
-stats.ttest_ind(x, y, equal_var=False)
-
-tval
 
 '''
 Use the following function to approximate the df neede for the p-value
@@ -186,6 +186,10 @@ y = np.zeros(n)
 for k in grp:
     y[label == k] = np.random.normal(mu_k[k], sd_k[k], n_k[k])
 
+# Compute with scipy
+fval, pval = stats.f_oneway(y[label == 0], y[label == 1], y[label == 2])
+
+
 # estimate parameters
 ybar_k = np.zeros(3)
 
@@ -203,6 +207,28 @@ pval = stats.f.sf(fval, (len(grp) - 1), n - len(grp))
 
 assert np.allclose((fval, pval), 
                    stats.f_oneway(y[label == 0], y[label == 1], y[label == 2]))
+
+'''
+### Wilcoxon signed-rank test (one-sample test)
+
+'''
+import scipy.stats as stats
+n = 20
+# Buismess Volume group 0
+bv0 = np.random.normal(loc=1, scale=.1, size=n)
+
+# Buismess Volume group 1
+bv1 = np.random.normal(loc=1, scale=.1, size=n)
+
+# create an outlier
+bv1[0] -= 10
+
+# Paired t-test
+print(stats.ttest_ind(bv0, bv1))
+
+# Wilcoxon
+print(stats.mannwhitneyu(bv0, bv1))
+
 
 '''
 ## Simple linear regression (one continuous independant variable (IV))
