@@ -1,12 +1,18 @@
+'''
+Univariate statistics exercises
+===============================
+'''
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 %matplotlib inline
-np.random.seed(seed=42)  # make example reproducible
+np.random.seed(seed=42)  # make the example reproducible
 
 
 '''
-## Estimator of main statistical measures
+Estimator of main statistical measures
+--------------------------------------
 
 - Generate 2 ramdom samples $x \sim(1.78, 0.1)$, $y \sim(1.66, 0.1)$ both of size 10.
 
@@ -34,7 +40,8 @@ assert Cov[0, 1] == xycov
 assert np.all(np.cov(xy, ddof=1) == np.cov(xy))
 
 '''
-###  One sample t-test (no IV)
+One sample t-test
+-----------------
 
 - 
 Given the following samples, test whether its true mean is 1.75.
@@ -82,11 +89,12 @@ assert np.allclose((tval, pval2sided), stats.ttest_1samp(x, xmu))
 
 
 '''
-###  Two sample t-test (no IV)
+Two sample t-test  (quantitative ~ categorial (2 levels))
+---------------------------------------------------------
 
 Given the following two sample, test whether their means are equals.
-
 '''
+
 import scipy.stats as stats
 nx, ny = 50, 25
 x = np.random.normal(loc=1.76, scale=.1, size=nx)
@@ -164,7 +172,8 @@ plt.savefig("/tmp/two_samples_ttest.svg")
 plt.clf()
 
 '''
-Anova
+Anova F-test (quantitative ~ categorial (>2 levels))
+----------------------------------------------------
 
 Perform an Anova on the following dataset.
 - Compute between and within variances
@@ -208,30 +217,11 @@ pval = stats.f.sf(fval, (len(grp) - 1), n - len(grp))
 assert np.allclose((fval, pval), 
                    stats.f_oneway(y[label == 0], y[label == 1], y[label == 2]))
 
-'''
-### Wilcoxon signed-rank test (one-sample test)
-
-'''
-import scipy.stats as stats
-n = 20
-# Buismess Volume group 0
-bv0 = np.random.normal(loc=1, scale=.1, size=n)
-
-# Buismess Volume group 1
-bv1 = np.random.normal(loc=1, scale=.1, size=n)
-
-# create an outlier
-bv1[0] -= 10
-
-# Paired t-test
-print(stats.ttest_ind(bv0, bv1))
-
-# Wilcoxon
-print(stats.mannwhitneyu(bv0, bv1))
 
 
 '''
-## Simple linear regression (one continuous independant variable (IV))
+Simple linear regression (one continuous independant variable (IV))
+-------------------------------------------------------------------
 '''
 
 
@@ -304,7 +294,6 @@ fval = ss_reg / (ss_res / (n - 2))
   * P(F(1,n)>F) is the p-value, compute it.
 '''
 
-from scipy.stats as stats
 fvalues = np.linspace(10, 25, 100)
 
 plt.plot(fvalues, f.pdf(fvalues, 1, 30), 'b-', label="F(1, 30)")
@@ -331,21 +320,43 @@ import sklearn.feature_selection
 #sklearn.feature_selection.f_regression??
 sklearn.feature_selection.f_regression(x.reshape((n, 1)), y)
 
-"""
-## center = True
-## degrees_of_freedom = y.size - (2 if center else 1)
-## F = corr ** 2 / (1 - corr ** 2) * degrees_of_freedom
-## pv = stats.f.sf(F, 1, degrees_of_freedom)
 
-Comapre the residual sum of squares of two models, 1 and 2, where model 1 is 'nested' within model 2. Model 1 is the Restricted model, and Model 2 is the Unrestricted one. That is, model 1 has $p1$ parameters, and model 2 has $p2$ parameters, where $p2 > p1$. The model with more parameters will always be able to fit the data at least as well as the model with fewer parameters. Thus typically model 2 will give a better (i.e. lower error) fit to the data than model 1. But one often wants to determine whether model 2 gives a significantly better fit to the data.
+'''
+Multiple regression
+-------------------
+'''
+import numpy as np
+import scipy
+np.random.seed(seed=42)  # make the example reproducible
 
-If there are $n$ data points to estimate parameters of both models from, then one can calculate the F statistic, given by
+# Dataset
+N, P = 200, 4
+X = np.random.normal(size=N * P).reshape((N, P))
+X[:, 0] = 1  # Fist columns is the intercept
+print("X:\n", X[:5, :])
+betastar = np.array([10, 1, 2, 0])
+y = np.dot(X, betastar) + np.random.normal(size=N)
 
-$$
-    F = \frac{\left(\frac{\text{RSS}_1 - \text{RSS}_2 }{p_2 - p_1}\right)}{\left(\frac{\text{RSS}_2}{n - p_2 + 1}\right)} ,
-$$
+# Estimate the parameters
+Xpinv = scipy.linalg.pinv2(X)
+betahat = np.dot(Xpinv, y)
+print("Estimated beta:\n", betahat)
 
-where RSSi is the residual sum of squares of model i. Under the null hypothesis that model 2 does not provide a significantly better fit than model 1, F will have an F distribution, with ($p_2-p_1, n-p_2+1$) degrees of freedom. The null hypothesis is rejected if the F calculated from the data is greater than the critical value of the F-distribution for some desired false-rejection probability (e.g. 0.05).
 
-In our case: $\text{RSS}_1=SS_\text{tot}$, $\text{RSS}_2 = SS_\text{res}$, thus $\text{RSS}_1 - \text{RSS}_2 = SS_\text{reg}$ $p_1=1$, $p_2=2$.
-"""
+'''
+1. What are the dimensions of pinv$(X)$ ?
+
+'''
+print(Xpinv.shape)
+
+
+'''
+2. Compute the MSE between the predicted values and the true values.
+'''
+
+yhat = np.dot(X, betahat)
+
+mse = np.sum((y - yhat) ** 2) / N
+print("MSE =", mse)
+
+import scipy.stats as stats
