@@ -346,6 +346,8 @@ print("Estimated beta:\n", betahat)
 '''
 1. What are the dimensions of pinv$(X)$ ?
 
+((P x N) (N x P))^1 (P x N)
+P x N
 '''
 print(Xpinv.shape)
 
