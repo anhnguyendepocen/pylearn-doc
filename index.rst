@@ -12,9 +12,9 @@ Intro
 
     rst/intro_ml.rst
 
-#======================
-#Introduction to Python
-#======================
+.. ======================
+.. Introduction to Python
+.. ======================
 
 .. toctree::
     :maxdepth: 2
