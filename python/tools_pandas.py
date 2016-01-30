@@ -51,6 +51,15 @@ Concatenate DataFrame
 
 user1.append(user2)
 users = pd.concat([user1, user2, user3])
+print(users)
+
+#   age gender        job   name
+#0   19      F    student  alice
+#1   26      M    student   john
+#0   22      M    student   eric
+#1   58      F    manager   paul
+#0   33      M   engineer  peter
+#1   44      F  scientist  julie
 
 '''
 Join DataFrame
@@ -59,12 +68,36 @@ Join DataFrame
 
 user4 = pd.DataFrame(dict(name=['alice', 'john', 'eric', 'julie'],
                           height=[165, 180, 175, 171]))
+print(user4)
+
+#   height   name
+#0     165  alice
+#1     180   john
+#2     175   eric
+#3     171  julie
 
 # Use intersection of keys from both frames
-pd.merge(users, user4, on="name")
+merge_inter = pd.merge(users, user4, on="name")
+
+print(merge_inter)
+
+#   age gender        job   name  height
+#0   19      F    student  alice     165
+#1   26      M    student   john     180
+#2   22      M    student   eric     175
+#3   44      F  scientist  julie     171
 
 # Use union of keys from both frames
 users = pd.merge(users, user4, on="name", how='outer')
+print(users)
+
+#   age gender        job   name  height
+#0   19      F    student  alice     165
+#1   26      M    student   john     180
+#2   22      M    student   eric     175
+#3   58      F    manager   paul     NaN
+#4   33      M   engineer  peter     NaN
+#5   44      F  scientist  julie     171
 
 '''
 Summarizing
@@ -77,6 +110,16 @@ type(users)             # DataFrame
 users.head()            # print the first 5 rows
 users.tail()            # print the last 5 rows
 users.describe()        # summarize all numeric columns
+#             age      height
+#count   6.000000    4.000000
+#mean   33.666667  172.750000
+#std    14.895189    6.344289
+#min    19.000000  165.000000
+#25%    23.000000  169.500000
+#50%    29.500000  173.000000
+#75%    41.250000  176.250000
+#max    58.000000  180.000000
+
 users.index             # "the index" (aka "the labels")
 users.columns           # column names (which is "an index")
 users.dtypes            # data types of each column
@@ -86,7 +129,25 @@ users.info()            # concise summary (includes memory usage as of pandas 0.
 
 # summarize all columns (new in pandas 0.15.0)
 users.describe(include='all')       # describe all Series
+#              age gender      job   name      height
+#count    6.000000      6        6      6    4.000000
+#unique        NaN      2        4      6         NaN
+#top           NaN      M  student  alice         NaN
+#freq          NaN      3        3      1         NaN
+#mean    33.666667    NaN      NaN    NaN  172.750000
+#std     14.895189    NaN      NaN    NaN    6.344289
+#min     19.000000    NaN      NaN    NaN  165.000000
+#25%     23.000000    NaN      NaN    NaN  169.500000
+#50%     29.500000    NaN      NaN    NaN  173.000000
+#75%     41.250000    NaN      NaN    NaN  176.250000
+#max     58.000000    NaN      NaN    NaN  180.000000
+
 users.describe(include=['object'])  # limit to one (or more) types
+#       gender      job   name
+#count       6        6      6
+#unique      2        4      6
+#top         M  student  alice
+#freq        3        3      1
 
 '''
 Columns selection
@@ -363,5 +424,5 @@ df.ix[[1, 3], "gender"] = None
 '''
 1. Write a function  fillmissing_with_mean(df) that fill all missing value of numerical column with the mean of the current columns.
 
-2) Save the original users and "imputed" frame in a single excel file "users.xlsx" with 2 sheets: original, imputed
+2. Save the original users and "imputed" frame in a single excel file "users.xlsx" with 2 sheets: original, imputed
 '''

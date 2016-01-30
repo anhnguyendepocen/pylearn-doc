@@ -157,25 +157,16 @@ np.random.randn(10)         # random normals (mean 0, sd 1)
 np.random.randint(0, 2, 10) # 10 randomly picked 0 or 1
 
 '''
-Exercise 1: array manipulation
-------------------------------
+Exercise array manipulation
+---------------------------
 
-Given the array
-
-X = np.random.randn(4, 2) # random normals in 4x2 array
-
-Write a function argmin_axis0(arr) that return an array of the row indices
-of the minimiun value for each column.
-
-Figure-out a vectorized operation that does the job.
-
-Exercise 2: vectorized operations
----------------------------------
-
-Given the array
+Given the array:
+'''
 
 X = np.random.randn(4, 2) # random normals in 4x2 array
 
-Write a function standardize(X) that return an array whose columns are
-centered and scaled (by std-dev).
+'''
+- For each column find the row indices of the minimiun value.
+    
+- Write a function `standardize(X)` that return an array whose columns are centered and scaled (by std-dev).
 '''

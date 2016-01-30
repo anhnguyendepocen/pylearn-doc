@@ -8,7 +8,7 @@ PYTORST       = python bin/conv_python_to_rst.py
 PAPER         =
 BUILDDIR      = build
 NTBOOK        = $(shell ls notebooks/*.ipynb)
-SRC           = $(shell ls src/*.py)
+SRC           = $(shell ls python/*.py)
 RST           = $(NTBOOK:.ipynb=.rst) $(SRC:.py=.rst)
 $(info $(RST))
 $(info $(PYTORST))

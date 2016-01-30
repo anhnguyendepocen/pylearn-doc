@@ -30,8 +30,8 @@ Data Manipulation and Cleaning
 .. toctree::
     :maxdepth: 2
 
-    src/tools_numpy.rst
-    src/tools_pandas.rst
+    python/tools_numpy.rst
+    python/tools_pandas.rst
     notebooks/tools_matplotlib.rst
 
 =========================
