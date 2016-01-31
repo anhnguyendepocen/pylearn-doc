@@ -110,12 +110,39 @@ tval, pval = stats.ttest_ind(x, y, equal_var=False)
 xbar, ybar = np.mean(x), np.mean(y)
 xvar, yvar = np.var(x, ddof=1), np.var(y, ddof=1)
 
+'''
+equal variance
+~~~~~~~~~~~~~~~~
+'''
+
+sigma = np.sqrt((xvar * (nx - 1) + yvar * (ny - 1)) / (nx + ny - 2))
+
+se = sigma * np.sqrt(1 / nx + 1 / ny)
+
+tval = (xbar - ybar) / se
+
+df = nx + ny - 2
+
+'''
+- Compute the p-value. The p-value is one-sided: a two-sided test would test P(T > tval) and P(T < -tval). What would be the two sided p-value ?
+'''
+
+pval = stats.t.sf(tval, df)
+pval2sided = pval * 2
+
+assert np.allclose((tval, pval2sided), stats.ttest_ind(x, y, equal_var=True))
+
+'''
+unequal variance
+~~~~~~~~~~~~~~~~
+'''
+
 se = np.sqrt(xvar / nx + yvar / ny)
 
 tval = (xbar - ybar) / se
 
 '''
-Use the following function to approximate the df neede for the p-value
+Use the following function to approximate the df needed for the p-value
 '''
 
 def unequal_var_ttest_df(v1, n1, v2, n2):
@@ -330,18 +357,20 @@ import scipy
 np.random.seed(seed=42)  # make the example reproducible
 
 # Dataset
-N, P = 200, 4
-X = np.random.normal(size=N * P).reshape((N, P))
-X[:, 0] = 1  # Fist columns is the intercept
-print("X:\n", X[:5, :])
-betastar = np.array([10, 1, 2, 0])
-y = np.dot(X, betastar) + np.random.normal(size=N)
+N, P = 50, 4
+X = np.random.normal(size= N * P).reshape((N, P))
+## Our model needs an intercept so we add a column of 1s:
+X[:, 0] = 1
+print(X[:5, :])
+
+betastar = np.array([10, 1., .5, 0.1])
+e = np.random.normal(size=N)
+y = np.dot(X, betastar) + e
 
 # Estimate the parameters
 Xpinv = scipy.linalg.pinv2(X)
 betahat = np.dot(Xpinv, y)
 print("Estimated beta:\n", betahat)
-
 
 '''
 1. What are the dimensions of pinv$(X)$ ?
