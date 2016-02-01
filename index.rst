@@ -24,7 +24,7 @@ Intro
 
 
 ==============================
-Data Manipulation and Cleaning
+Data manipulation and cleaning
 ==============================
 
 .. toctree::
@@ -34,14 +34,21 @@ Data Manipulation and Cleaning
     python/tools_pandas.rst
     notebooks/tools_matplotlib.rst
 
-=========================
-Exploratory Data Analysis
-=========================
+===============================
+Statistics for machine learning
+===============================
 
 .. toctree::
     :maxdepth: 3
 
     notebooks/stat_univ.rst
+
+=========================
+Exploratory data analysis
+=========================
+.. toctree::
+    :maxdepth: 3
+
     notebooks/ml_pca.rst
     notebooks/ml_clustering.rst
 
