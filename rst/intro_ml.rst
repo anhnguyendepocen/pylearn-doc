@@ -1,9 +1,10 @@
+================================
 Introduction to Machine Learning
 ================================
 
 
 Machine Learning within data science
-------------------------------------
+====================================
 
 .. image:: images/Data_Science_VD.png
    :scale: 50
@@ -19,14 +20,14 @@ Scenario: a company wants to detect potential future client among a base of pros
 
 
 IT/computing science tools
---------------------------
+==========================
 
     - Python: the language
     - Numpy: raw numerical data
     - Pandas: structured data
 
 Statistics and applied mathematics
-----------------------------------
+==================================
 
     - Linear model
     - Non parametric statistics
@@ -34,17 +35,17 @@ Statistics and applied mathematics
 
 
 Data analysis methodology
--------------------------
+=========================
 
 DIKW Pyramid: Data, Information, Knowledge, and Wisdom
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------------------
 
 .. image:: images/Wisdom-Knowledge-Information-Data-Pyramid15.png
    :scale: 50
    :align: center
 
 Methodology
-~~~~~~~~~~~
+-----------
 
 1. Discuss with your customer:
 

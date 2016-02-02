@@ -3,29 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-=====
-Intro
-=====
+
+================================
+Introduction to Machine Learning
+================================
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     rst/intro_ml.rst
 
-.. ======================
-.. Introduction to Python
-.. ======================
 
 .. toctree::
     :maxdepth: 2
 
     notebooks/tools_python.rst
 
-
-
-==============================
-Data manipulation and cleaning
-==============================
 
 .. toctree::
     :maxdepth: 2
@@ -34,27 +27,20 @@ Data manipulation and cleaning
     python/tools_pandas.rst
     notebooks/tools_matplotlib.rst
 
-===============================
-Statistics for machine learning
-===============================
 
 .. toctree::
     :maxdepth: 3
 
     notebooks/stat_univ.rst
 
-=========================
-Exploratory data analysis
-=========================
+
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
 
-    notebooks/ml_pca.rst
-    notebooks/ml_clustering.rst
+    notebooks/ml_dimensionality_reduction.rst
 
-===================
-Supervised learning
-===================
+..    notebooks/ml_clustering.rst
+
 
 .. toctree::
     :maxdepth: 2
