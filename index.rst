@@ -18,6 +18,7 @@ Phantom
     notebooks/tools_matplotlib.rst
     notebooks/stat_univ.rst
     notebooks/ml_dimensionality_reduction.rst
+    notebooks/ml_clustering.rst
     notebooks/ml_linear_regression.rst
     notebooks/ml_linear_classification.rst
     notebooks/ml_resampling.rst
