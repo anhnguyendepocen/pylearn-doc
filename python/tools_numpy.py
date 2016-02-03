@@ -1,5 +1,5 @@
 '''
-Numpy: Arrays and Matrices
+Numpy: arrays and matrices
 ==========================
 
 NumPy is an extension to the Python programming language, adding support for large, multi-dimensional (numerical) arrays and matrices, along with a large library of high-level mathematical functions to operate on these arrays.

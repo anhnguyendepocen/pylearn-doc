@@ -11,6 +11,8 @@ https://github.com/scipy-lectures/scipy-lecture-notes
 
 https://github.com/justmarkham/DAT4
 
+http://statweb.stanford.edu/~jtaylo/courses/stats202/index.html
+
 http://www.dataschool.io/
 
 https://onlinecourses.science.psu.edu/stat857/node/141

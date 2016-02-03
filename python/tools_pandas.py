@@ -1,5 +1,5 @@
 '''
-Pandas: Data Manipulation
+Pandas: data manipulation
 =========================
 
 It is often said that 80% of data analysis is spent on the cleaning and 
