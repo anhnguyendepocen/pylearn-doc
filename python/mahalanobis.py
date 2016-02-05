@@ -81,6 +81,8 @@ print('Mahalanobis dist(m1, x)=%.2f < dist(m1, m2)=%.2f' % (dm_m1x, dm_m1m2))
 
 
 '''
+## Exercice
+
 - Write a function `euclidian(a, b)` that compute the euclidian distance
 - Write a function `mahalanobis(a, b, Covi)` that compute the euclidian 
   distance, with the inverse of the covariance matrix. Use `scipy.linalg.inv(Cov)`
