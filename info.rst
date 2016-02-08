@@ -17,6 +17,8 @@ http://www.dataschool.io/
 
 https://onlinecourses.science.psu.edu/stat857/node/141
 
+https://github.com/rasbt/python-machine-learning-book
+
 A gallery of interesting IPython Notebooks
 ------------------------------------------
 
