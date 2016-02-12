@@ -214,7 +214,6 @@ ax.set_ylabel('Tax')
 ax.set_zlabel('Business potential')
 ax.set_zlim((-100, + 100))
 
-Use Partial Least Squares Regression (PLS) or Principal Components Analysis, regression methods that cut the number of predictors to a smaller set of uncorrelated components.
 '''
 L2 & L1 Penalization
 ====================
@@ -384,3 +383,53 @@ plot_r2_snr(n_features[n_features <= 200],
             snr[n_features <= 200],
             axis[1])
 plt.tight_layout()
+
+'''
+L1 L2 plot, L1 sparse
+'''
+import matplotlib.pyplot as plt
+import numpy as np
+
+n_samples = 1000
+X = np.random.multivariate_normal(mean=[0, 0], cov=[[1, .5],[.5, 1]], size=n_samples)
+#X = np.array([[1.0, 1.1], [0, 0], [-1.0, -1.1]])
+n_samples = X.shape[0]
+print(np.cov(X.T))
+beta_s = np.array([3, -3])
+
+noise = np.random.randn(n_samples)
+y =  np.dot(X, beta_s) + noise
+
+np.std(np.dot(X, beta_s)) / np.std(noise)
+
+def l1_max_linear_loss(X, y, mean=True):
+    n = float(X.shape[0])
+    scale = 1.0 / n if mean else 1.
+    l1_max = scale * np.abs(np.dot(X.T, y)).max()
+    return l1_max
+
+l1_max_linear_loss(X, y)
+#10
+dx = dy = 5
+beta1, beta2 = np.meshgrid(
+    np.linspace(-dx, dx, num=100),
+    np.linspace(-dy, dy, num=100))
+
+
+# Make sure |beta(0, 0)| = 0 is sampled
+Betas = np.column_stack([beta1.ravel(), beta2.ravel()])
+L2 = (Betas ** 2).sum(axis=1)
+
+MSE = 1 / n_samples * np.sum((y - (np.dot(X, Betas.T).T)) ** 2, axis=1)
+
+
+from matplotlib.colors import LogNorm
+cax = plt.matshow(MSE.reshape(beta1.shape),
+                  norm=LogNorm(vmin=MSE.min(), vmax=MSE.max()),
+                  cmap=plt.cm.coolwarm)
+frame = plt.gca()
+frame.get_xaxis().set_visible(False)
+frame.get_yaxis().set_visible(False)
+ 
+plt.savefig("/tmp/toto.svg")
+plt.close()
