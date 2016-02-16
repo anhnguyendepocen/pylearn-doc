@@ -11,6 +11,6 @@
 .*.swp
 .ipynb_checkpoints
 notebooks/*.rst
-src/*.rst
+python/*.rst
 .spyderproject
 build/

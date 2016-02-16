@@ -60,7 +60,7 @@ High dimensionality
 
 def fit_on_increasing_size(model):
     n_samples = 100
-    n_features_ = np.arange(10, 1000, 5)
+    n_features_ = np.arange(10, 800, 20)
     r2_train, r2_test, snr = [], [], []
     for n_features in n_features_:
         # Sample the dataset (* 2 nb of samples)
@@ -91,11 +91,12 @@ def plot_r2_snr(n_features_, r2_train, r2_test, xvline, snr, ax):
     ax.plot(n_features_, r2_train, label="Train r-squared", linewidth=2)
     ax.plot(n_features_, r2_test, label="Test r-squared", linewidth=2)
     ax.axvline(x=xvline, linewidth=2, color='k', ls='--')
-    ax.set_ylim(0, 1.1)
+    ax.axhline(y=0, linewidth=1, color='k', ls='--')
+    ax.set_ylim(-0.2, 1.1)
     ax.set_xlabel("Number of input features")
     ax.set_ylabel("r-squared")
     ax.legend(loc='best')
-    ax.set_title("Prediction perf. / nb feataures < 100")
+    ax.set_title("Prediction perf.")
     ax_right = ax.twinx()
     ax_right.plot(n_features_, snr, 'r-', label="SNR", linewidth=1)
     ax_right.set_ylabel("SNR", color='r')
@@ -363,10 +364,10 @@ import sklearn.metrics as metrics
 
 # Model = linear regression
 # lambda is alpha !
-ridge = lm.Lasso(alpha=.1)
+lasso = lm.Lasso(alpha=.1)
 
 # Fit models on dataset
-n_features, r2_train, r2_test, snr = fit_on_increasing_size(model=ridge)
+n_features, r2_train, r2_test, snr = fit_on_increasing_size(model=lasso)
 
 argmax = n_features[np.argmax(r2_test)]
 
@@ -433,3 +434,118 @@ frame.get_yaxis().set_visible(False)
  
 plt.savefig("/tmp/toto.svg")
 plt.close()
+
+
+'''
+Elastic-net
+'''
+import matplotlib.pyplot as plt
+import numpy as np
+import sklearn.linear_model as lm
+
+# Model = linear regression
+# lambda is alpha !
+mod = lm.ElasticNet(alpha=.5, l1_ratio=.5)
+
+# Fit models on dataset
+n_features, r2_train, r2_test, snr = fit_on_increasing_size(model=mod)
+
+argmax = n_features[np.argmax(r2_test)]
+
+# plot
+fig, axis = plt.subplots(1, 2, figsize=(9, 3))
+
+# Left pane: all features
+plot_r2_snr(n_features, r2_train, r2_test, argmax, snr, axis[0])
+
+# Right pane: Zoom on 100 first features
+plot_r2_snr(n_features[n_features <= 100], 
+            r2_train[n_features <= 100], r2_test[n_features <= 100],
+            argmax,
+            snr[n_features <= 100],
+            axis[1])
+plt.tight_layout()
+
+
+'''
+Realistic dataset for lm comparison: Work in Progress
+=====================================================
+'''
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import sklearn.linear_model as lm
+import sklearn.metrics as metrics
+import seaborn
+
+var, cov = 1, 1
+#n_features = 3
+Cov = np.ones((n_features, n_features)) * cov
+
+def fit_on_increasing_size(model):
+    n_samples = 50
+    n_features_ = np.arange(10, 390, 20)
+    r2_train, r2_test, snr = [], [], []
+    for n_features in n_features_:
+        # Sample the dataset (* 2 nb of samples)
+        n_features_info = int(n_features/10)
+        #print(n_features_info)
+        mean = np.zeros(n_features)
+        #Cov = np.ones((n_features, n_features)) * cov
+        #Cov[np.diag_indices_from(Cov)] = var
+        Cov = np.identity(n_features) * var
+        diag_indices = np.arange(n_features)
+        Cov[((diag_indices + 1)[:-1], diag_indices[:-1])] = cov
+        Cov[(diag_indices[:-1], (diag_indices + 1)[:-1])] = cov
+        np.random.seed(43)  # Make reproducible
+        X = np.random.multivariate_normal(mean=mean, cov=Cov, size=n_samples * 2)
+        #X = np.random.randn(n_samples * 2, n_features)
+        beta = np.zeros(n_features)
+        beta[:n_features_info] = 1
+        Xbeta = np.dot(X, beta)
+        eps = np.random.randn(n_samples * 2) * 3.
+        y =  Xbeta + eps
+        # Split the dataset into train and test sample
+        Xtrain, Xtest = X[:n_samples, :], X[n_samples:, :], 
+        ytrain, ytest = y[:n_samples], y[n_samples:]
+        # fit/predict
+        #try:
+        #    mod.set_params(alpha=np.sqrt(n_features))
+        #    print(mod.alpha)
+        #except:
+        #    pass
+        lr = model.fit(Xtrain, ytrain)
+        y_pred_train = lr.predict(Xtrain)
+        y_pred_test = lr.predict(Xtest)
+        snr.append(Xbeta.std() / eps.std())
+        r2_train.append(metrics.r2_score(ytrain, y_pred_train))
+        r2_test.append(metrics.r2_score(ytest, y_pred_test))
+    return n_features_, np.array(r2_train), np.array(r2_test), np.array(snr)
+
+
+# Model = linear regression
+mod = lm.LinearRegression(fit_intercept=False)
+# lambda is alpha !
+mod = lm.Ridge(alpha=10)
+mod = lm.Lasso(alpha=.1)
+mod = lm.ElasticNet(alpha=1, l1_ratio=.1)
+
+# Fit models on dataset
+n_features, r2_train, r2_test, snr = fit_on_increasing_size(model=mod)
+
+argmax = n_features[np.argmax(r2_test)]
+
+# plot
+fig, axis = plt.subplots(1, 2, figsize=(9, 3))
+
+# Left pane: all features
+plot_r2_snr(n_features, r2_train, r2_test, argmax, snr, axis[0])
+
+# Right pane: Zoom on 200 first features
+plot_r2_snr(n_features[n_features <= 200], 
+            r2_train[n_features <= 200], r2_test[n_features <= 200],
+            argmax,
+            snr[n_features <= 200],
+            axis[1])
+plt.tight_layout()
