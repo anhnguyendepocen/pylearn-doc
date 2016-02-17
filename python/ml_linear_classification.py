@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Feb  4 16:09:56 2016
+Created on Wed Feb 17 18:23:23 2016
 
 @author: ed203246
 """
+
+'''
+Fisher's linear discriminant
+============================
+'''
 import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 import seaborn as sns
-#%matplotlib inline
-
-'''
-Mahalanobis distance
-====================
-'''
 
 from matplotlib.patches import Ellipse
 def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
@@ -62,42 +61,34 @@ np.random.seed(42)
 X0 = np.random.multivariate_normal(mean0, Cov, n_samples)
 X1 = np.random.multivariate_normal(mean1, Cov, n_samples)
 
-x = np.array([2, 2])
+def fisher_lda(X, y):
+    mean0_hat, mean1_hat = X[y_true == 0].mean(axis=0),  X[y_true == 1].mean(axis=0)
+    Xcentered = np.vstack([(X[y_true == 0] - mean0_hat), (X[y_true == 1] - mean1_hat)])
+    Cov_hat = np.cov(Xcentered.T)
+    beta = np.dot(np.linalg.inv(Cov_hat), (mean1 - mean0))
+    thres = 1 / 2 * np.dot(beta, (mean1 - mean0))
+    return beta, thres, mean0_hat, mean1_hat, Cov_hat
 
-plt.scatter(X0[:, 0], X0[:, 1], color='b')
+X = np.vstack([X0, X1])
+y_true = np.array([0] * X0.shape[0] + [1] * X1.shape[0])
+beta, thres, mean0_hat, mean1_hat, Cov_hat = fisher_lda(X, y_true)
+beta_nrom = beta / np.linalg.norm(beta)
+
+y_proj = np.dot(X, beta)
+y_pred = np.asarray(y_proj > thres, dtype=int)
+errors = y_pred !=y_true 
+print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred)))
+
+plt.scatter(X[errors, 0], X[errors, 1], color='k', marker="x", s=200, lw=2)
 plt.scatter(X1[:, 0], X1[:, 1], color='r')
-plt.scatter(mean0[0], mean0[1], color='b', s=200, label="m0")
-plt.scatter(mean1[0], mean1[1], color='r', s=200, label="m2")
-plt.scatter(x[0], x[1], color='k', s=200, label="x")
-plot_cov_ellipse(Cov, pos=mean0, facecolor='none', linewidth=2, edgecolor='b')
-plot_cov_ellipse(Cov, pos=mean1, facecolor='none', linewidth=2, edgecolor='r')
+plt.scatter(X0[:, 0], X0[:, 1], color='b')
+plt.scatter(mean0_hat[0], mean0_hat[1], color='b', s=200, label="m0")
+plt.scatter(mean1_hat[0], mean1_hat[1], color='r', s=200, label="m2")
+plot_cov_ellipse(Cov_hat, pos=mean0_hat, facecolor='none', linewidth=2, edgecolor='k', ls='--')
+plot_cov_ellipse(Cov_hat, pos=mean1_hat, facecolor='none', linewidth=2, edgecolor='k', ls='--')
+plt.arrow( mean0_hat[0], mean0_hat[1], beta_nrom[0], beta_nrom[1], linewidth=3, fc="k", ec="k", head_width=0.3, head_length=0.3)
 plt.legend(loc='upper left')
 
-#
-d2_m0x = scipy.spatial.distance.euclidean(mean0, x)
-d2_m0m2 = scipy.spatial.distance.euclidean(mean0, mean1)
-
-Covi = scipy.linalg.inv(Cov)
-dm_m0x = scipy.spatial.distance.mahalanobis(mean0, x, Covi)
-dm_m0m2 = scipy.spatial.distance.mahalanobis(mean0, mean1, Covi)
-
-print('Euclidian dist(m0, x)=%.2f > dist(m0, m2)=%.2f' % (d2_m0x, d2_m0m2))
-print('Mahalanobis dist(m0, x)=%.2f < dist(m0, m2)=%.2f' % (dm_m0x, dm_m0m2))
-
-
-'''
-## Exercice
-
-- Write a function `euclidian(a, b)` that compute the euclidian distance
-- Write a function `mahalanobis(a, b, Covi)` that compute the euclidian 
-  distance, with the inverse of the covariance matrix. Use `scipy.linalg.inv(Cov)`
-  to invert your matrix.
-'''
-def euclidian(a, b):
-    return np.sqrt(np.sum((a - b) ** 2))
-
-def mahalanobis(a, b, cov_inv):
-    return np.sqrt(np.dot(np.dot((a - b), cov_inv),  (a - b).T))
-
-assert mahalanobis(mean0, mean1, Covi) == dm_m0m2
-assert euclidian(mean0, mean1)  == d2_m0m2
+sns.kdeplot(y_proj[y_true==0], shade=True, color='b')
+sns.kdeplot(y_proj[y_true==1], shade=True, color='r')
+plt.axvline(thres, color='k', ls='--')
