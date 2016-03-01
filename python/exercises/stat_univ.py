@@ -22,7 +22,7 @@ computations and compare them (using `assert`) with your previous results.
 '''
 n = 10
 x  = np.random.normal(loc=1.78, scale=.1, size=n)
-y  = np.random.normal(loc=1.78, scale=.1, size=n)
+y  = np.random.normal(loc=1.66, scale=.1, size=n)
 
 xbar = np.sum(x) / n
 assert np.mean(x) == xbar

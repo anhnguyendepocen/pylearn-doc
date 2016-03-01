@@ -92,3 +92,32 @@ plt.legend(loc='upper left')
 sns.kdeplot(y_proj[y_true==0], shade=True, color='b')
 sns.kdeplot(y_proj[y_true==1], shade=True, color='r')
 plt.axvline(thres, color='k', ls='--')
+
+beta, thres, mean0_hat, mean1_hat, Cov_hat = fisher_lda(X, y_true)
+
+
+
+mean0_hat = mean0_hat[:, None]
+mean1_hat = mean1_hat[:, None]
+diff = mean1_hat - mean0_hat
+
+B = np.dot(diff, diff.T)
+#np.outer(diff, diff)
+W = Cov_hat
+
+u = np.random.randn(2, 1)
+Wi = scipy.linalg.inv(W)
+Wu = np.dot(W, u)
+Bu = np.dot(B, u)
+
+
+# u' B u /  u' W u
+np.dot(u.T, Bu) / np.dot(u.T, Wu)
+
+# u' (B . W^-1) u
+np.dot(np.dot(u.T, np.dot(B, Wi)), u)
+
+
+
+
+
