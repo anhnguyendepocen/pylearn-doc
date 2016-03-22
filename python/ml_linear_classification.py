@@ -55,30 +55,61 @@ def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
     ax.add_artist(ellip)
     return ellip
 
-n_samples, n_features = 100, 2
-mean0, mean1 = np.array([0, 0]), np.array([0, 2])
-Cov = np.array([[1, .8],[.8, 1]])
-np.random.seed(42)
-X0 = np.random.multivariate_normal(mean0, Cov, n_samples)
-X1 = np.random.multivariate_normal(mean1, Cov, n_samples)
 
 def fisher_lda(X, y):
-    mean0_hat, mean1_hat = X[y_true == 0].mean(axis=0),  X[y_true == 1].mean(axis=0)
-    Xcentered = np.vstack([(X[y_true == 0] - mean0_hat), (X[y_true == 1] - mean1_hat)])
+    mean0_hat, mean1_hat = X[y == 0].mean(axis=0),  X[y == 1].mean(axis=0)
+    Xcentered = np.vstack([(X[y == 0] - mean0_hat), (X[y == 1] - mean1_hat)])
     Cov_hat = np.cov(Xcentered.T)
     beta = np.dot(np.linalg.inv(Cov_hat), (mean1 - mean0))
     beta /= np.linalg.norm(beta)
     thres = 1 / 2 * np.dot(beta, (mean1 - mean0))
     return beta, thres, mean0_hat, mean1_hat, Cov_hat
 
+def plot_linear_disc(beta, thres, X, y):
+    # Threshold coordinate. xy of the point equi-distant to m0, m1
+    thres_xy = thres * beta
+    # vector supporting the seprating hyperplane 
+    sep_vec = np.array([beta[1], -beta[0]])
+    # Equation of seprating hyperplane
+    a = np.arctan(sep_vec[1] / sep_vec[0])
+    b = thres_xy[1] - a * thres_xy[0]
+    xmin, xmax = np.min(X, axis=0)[0], np.max(X, axis=0)[0]
+    ymin = a * xmin + b
+    ymax = a * xmax + b
+    sep_p1_xy = [xmin, ymin]
+    sep_p2_xy = [xmax, ymax]
+    # Plot
+    err = plt.scatter(X[errors, 0], X[errors, 1], color='k', marker="x", s=100, lw=2)
+    plt.scatter(X[y == 0, 0], X[y == 0, 1], color=palette[0])
+    plt.scatter(X[y == 1, 0], X[y == 1, 1], color=palette[1])
+    m1 = plt.scatter(mean0_hat[0], mean0_hat[1], color=palette[0], s=200, label="m0")
+    m2 = plt.scatter(mean1_hat[0], mean1_hat[1], color=palette[1], s=200, label="m2")
+    plot_cov_ellipse(Cov_hat, pos=mean0_hat, facecolor='none', linewidth=2, edgecolor=palette[3], ls='-')
+    Sw = plot_cov_ellipse(Cov_hat, pos=mean1_hat, facecolor='none', linewidth=2, edgecolor=palette[3], ls='-')
+    # Projection vector
+    proj = plt.arrow(thres_xy[0], thres_xy[1], beta[0], beta[1], fc="k", ec="k", head_width=0.2, head_length=0.2, linewidth=2)
+    # Points along the separating hyperplance
+    hyper = plt.plot([sep_p1_xy[0], sep_p2_xy[0]], [sep_p1_xy[1], sep_p2_xy[1]], color='k', linewidth=4, ls='--')
+    plt.axis('equal')
+    plt.legend([m1, m2, Sw, proj, err], ['$\mu_0$', '$\mu_1$', '$S_W$', "$w$", 'Errors'], loc='lower right', fontsize=18)
+
+# Dataset
+n_samples, n_features = 100, 2
+mean0, mean1 = np.array([0, 0]), np.array([0, 2])
+Cov = np.array([[1, .8],[.8, 1]])
+np.random.seed(42)
+X0 = np.random.multivariate_normal(mean0, Cov, n_samples)
+X1 = np.random.multivariate_normal(mean1, Cov, n_samples)
 X = np.vstack([X0, X1])
-y_true = np.array([0] * X0.shape[0] + [1] * X1.shape[0])
-beta, thres, mean0_hat, mean1_hat, Cov_hat = fisher_lda(X, y_true)
+y = np.array([0] * X0.shape[0] + [1] * X1.shape[0])
+
+# Fisher LDA
+beta, thres, mean0_hat, mean1_hat, Cov_hat = fisher_lda(X, y)
 #beta_nrom = beta / np.linalg.norm(beta)
 
 y_proj = np.dot(X, beta)
 y_pred = np.asarray(y_proj > thres, dtype=int)
-errors = y_pred != y_true 
+errors = y_pred != y 
 print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred)))
 
 #%matplotlib inline
@@ -88,32 +119,27 @@ from matplotlib import rc
 plt.rc('text', usetex=True)
 font = {'family' : 'serif'}
 plt.rc('font', **font)
+palette = sns.color_palette()
 
 fig = plt.figure(figsize=(7, 7))
-# Threshold coordinate. xy of the point equi-distant to m0, m1
-thres_xy = thres * beta
-# vector supporting the seprating hyperplane 
-sep_vec = np.array([-beta[1], beta[0]])
-# 2 points lying on the seprating hyperplane
-sep_p1_xy = thres_xy - 5 * sep_vec
-sep_p2_xy = thres_xy + 3 * sep_vec
+plot_linear_disc(beta, thres, X, y)
 
-err = plt.scatter(X[errors, 0], X[errors, 1], color='k', marker="x", s=100, lw=2)
-plt.scatter(X1[:, 0], X1[:, 1], color='r')
-plt.scatter(X0[:, 0], X0[:, 1], color='b')
-m1 = plt.scatter(mean0_hat[0], mean0_hat[1], color='b', s=200, label="m0")
-m2 = plt.scatter(mean1_hat[0], mean1_hat[1], color='r', s=200, label="m2")
-plot_cov_ellipse(Cov_hat, pos=mean0_hat, facecolor='none', linewidth=2, edgecolor='m', ls='-')
-Sw = plot_cov_ellipse(Cov_hat, pos=mean1_hat, facecolor='none', linewidth=2, edgecolor='m', ls='-')
-#ax.legend([ell], ['label1'])
-# projection vector
-proj = plt.arrow(equi_xy[0], equi_xy[1], beta[0], beta[1], fc="k", ec="k", head_width=0.2, head_length=0.2, linewidth=2)
-# Points along the separating hyperplance
-hyper = plt.plot([sep_p1_xy[0], sep_p2_xy[0]], [sep_p1_xy[1], sep_p2_xy[1]], color='k', linewidth=4, ls='--')
-plt.plot()
+# RGBA S_W 8172b2ff
+# RGBA S_B c44e52ff
+proj = np.dot(X, beta)
 
-plt.legend([m1, m2, Sw, proj, err], ['$\mu_0$', '$\mu_1$', '$S_W$', "$w$", 'Errors'], loc='lower right', fontsize=18)
+# Fisher projection
+plt.figure(figsize=(np.sqrt(2 * 7 ** 2), 2))
+for lab in np.unique(y_true):
+    sns.distplot(proj.ravel()[y == lab], label=str(lab))
 
+plt.figure(figsize=(7, 2))
+for lab in np.unique(y_true):
+    sns.distplot(X[y == lab, 0], label=str(lab))
+
+plt.figure(figsize=(7, 2))
+for lab in np.unique(y_true):
+    sns.distplot(X[y == lab, 1], label=str(lab))
 
 '''
 Linear discriminant analysis (LDA)
