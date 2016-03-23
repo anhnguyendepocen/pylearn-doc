@@ -65,7 +65,7 @@ def fisher_lda(X, y):
     thres = 1 / 2 * np.dot(beta, (mean1 - mean0))
     return beta, thres, mean0_hat, mean1_hat, Cov_hat
 
-def plot_linear_disc(beta, thres, X, y):
+def plot_linear_disc(beta, thres, X, y, Cov_hat=None):
     # Threshold coordinate. xy of the point equi-distant to m0, m1
     thres_xy = thres * beta
     # vector supporting the seprating hyperplane 
@@ -91,7 +91,7 @@ def plot_linear_disc(beta, thres, X, y):
     # Points along the separating hyperplance
     hyper = plt.plot([sep_p1_xy[0], sep_p2_xy[0]], [sep_p1_xy[1], sep_p2_xy[1]], color='k', linewidth=4, ls='--')
     plt.axis('equal')
-    plt.legend([m1, m2, Sw, proj, err], ['$\mu_0$', '$\mu_1$', '$S_W$', "$w$", 'Errors'], loc='lower right', fontsize=18)
+    #plt.legend([m1, m2, Sw, proj, err], ['$\mu_0$', '$\mu_1$', '$S_W$', "$w$", 'Errors'], loc='lower right', fontsize=18)
 
 # Dataset
 n_samples, n_features = 100, 2
@@ -105,7 +105,6 @@ y = np.array([0] * X0.shape[0] + [1] * X1.shape[0])
 
 # Fisher LDA
 beta, thres, mean0_hat, mean1_hat, Cov_hat = fisher_lda(X, y)
-#beta_nrom = beta / np.linalg.norm(beta)
 
 y_proj = np.dot(X, beta)
 y_pred = np.asarray(y_proj > thres, dtype=int)
@@ -145,6 +144,7 @@ for lab in np.unique(y_true):
 Linear discriminant analysis (LDA)
 ==================================
 '''
+
 import numpy as np
 from sklearn.lda import LDA
 
@@ -187,4 +187,60 @@ for lab in np.unique(y):
 plt.legend()
 plt.title("Distribution of projected data using LDA")
 
+'''
+Ridge Fisher's linear discriminant
+============================
+'''
+#%matplotlib inline
+#%matplotlib qt
 
+# Dataset
+n_samples, n_features = 5, 2
+mean0, mean1 = np.array([0, 0]), np.array([0, 2])
+Cov = np.array([[1, .8],[.8, 1]])
+np.random.seed(45)
+X0 = np.random.multivariate_normal(mean0, Cov, n_samples)
+X1 = np.random.multivariate_normal(mean1, Cov, n_samples)
+# modify X1 to distrub the etimation of cov 
+X1[2, :] = [2, -4]
+
+X = np.vstack([X0, X1])
+y = np.array([0] * X0.shape[0] + [1] * X1.shape[0])
+
+def ridge_fisher_lda(X, y, lambda_):
+    mean0_hat, mean1_hat = X[y == 0].mean(axis=0),  X[y == 1].mean(axis=0)
+    Xcentered = np.vstack([(X[y == 0] - mean0_hat), (X[y == 1] - mean1_hat)])
+    Cov_hat = np.cov(Xcentered.T) + lambda_ * np.identity(2)
+    beta = np.dot(np.linalg.inv(Cov_hat), (mean1 - mean0))
+    beta /= np.linalg.norm(beta)
+    thres = 1 / 2 * np.dot(beta, (mean1 - mean0))
+    return beta, thres, mean0_hat, mean1_hat, Cov_hat
+
+plt.figure(figsize=(15, 5)) 
+
+# Fisher LDA
+plt.subplot(131)
+beta, thres, mean0_hat, mean1_hat, Cov_hat = fisher_lda(X, y)
+y_proj = np.dot(X, beta)
+y_pred = np.asarray(y_proj > thres, dtype=int)
+errors = y_pred != y
+plot_linear_disc(beta, thres, X, y, Cov_hat=Cov_hat/np.linalg.norm(Cov_hat))
+plt.title("Fisher ($\lambda=%.1f$)" % 0)
+
+# Fisher Ridge
+plt.subplot(132)
+beta, thres, mean0_hat, mean1_hat, Cov_hat = ridge_fisher_lda(X, y, 1)
+y_proj = np.dot(X, beta)
+y_pred = np.asarray(y_proj > thres, dtype=int)
+errors = y_pred != y
+plot_linear_disc(beta, thres, X, y, Cov_hat=Cov_hat/np.linalg.norm(Cov_hat))
+plt.title("Ridge Fisher ($\lambda=%.1f$)" % 1)
+
+# Fisher Ridge
+plt.subplot(133)
+beta, thres, mean0_hat, mean1_hat, Cov_hat = ridge_fisher_lda(X, y, 10)
+y_proj = np.dot(X, beta)
+y_pred = np.asarray(y_proj > thres, dtype=int)
+errors = y_pred != y 
+plot_linear_disc(beta, thres, X, y, Cov_hat=Cov_hat/np.linalg.norm(Cov_hat))
+plt.title("Ridge Fisher ($\lambda=%.1f$)" % 10)
