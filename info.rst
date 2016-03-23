@@ -3,6 +3,7 @@ Resources
 ---------
 
 pdf: https://sites.google.com/site/duchesnay/courses
+duchesnay@gmail.com
 
 
 ftp://ftp.cea.fr/pub/unati/people/educhesnay/pylearn_doc/MachineLearningPython.pdf
