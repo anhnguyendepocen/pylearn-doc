@@ -187,6 +187,21 @@ for lab in np.unique(y):
 plt.legend()
 plt.title("Distribution of projected data using LDA")
 
+
+'''
+Logistic regression
+'''
+from sklearn import linear_model
+logreg = linear_model.LogisticRegression(C=1e8)
+
+# we create an instance of Neighbours Classifier and fit the data.
+logreg.fit(X, y)
+y_pred_logreg = logreg.predict(X)
+
+errors =  y_pred_logreg != y
+print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_logreg)))
+print(logreg.coef_)
+
 '''
 Ridge Fisher's linear discriminant
 ============================
@@ -244,3 +259,33 @@ y_pred = np.asarray(y_proj > thres, dtype=int)
 errors = y_pred != y 
 plot_linear_disc(beta, thres, X, y, Cov_hat=Cov_hat/np.linalg.norm(Cov_hat))
 plt.title("Ridge Fisher ($\lambda=%.1f$)" % 10)
+
+'''
+Ridge
+'''
+from sklearn import linear_model
+logreg = linear_model.LogisticRegression(C=1)
+# This class implements regularized logistic regression. C is the Inverse of regularization strength.
+# Large value => no regularization.
+
+logreg.fit(X, y)
+y_pred_logreg = logreg.predict(X)
+
+errors =  y_pred_logreg != y
+print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_logreg)))
+print(logreg.coef_)
+
+'''
+Lasso
+'''
+from sklearn import linear_model
+logreg = linear_model.LogisticRegression(penalty='l1', C=.02)
+# This class implements regularized logistic regression. C is the Inverse of regularization strength.
+# Large value => no regularization.
+
+logreg.fit(X, y)
+y_pred_logreg = logreg.predict(X)
+
+errors =  y_pred_logreg != y
+print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_logreg)))
+print(logreg.coef_)

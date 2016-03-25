@@ -21,9 +21,8 @@ Phantom
     notebooks/ml_clustering.rst
     notebooks/ml_linear_regression.rst
     notebooks/ml_linear_classification.rst
-    notebooks/ml_resampling.rst
-    notebooks/ml_linear_regularization.rst
     notebooks/ml_non_linear_prediction.rst
+    notebooks/ml_resampling.rst
 
 ==================
 Indices and tables
