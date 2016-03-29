@@ -204,7 +204,7 @@ print(logreg.coef_)
 
 '''
 Ridge Fisher's linear discriminant
-============================
+==================================
 '''
 #%matplotlib inline
 #%matplotlib qt
@@ -261,7 +261,23 @@ plot_linear_disc(beta, thres, X, y, Cov_hat=Cov_hat/np.linalg.norm(Cov_hat))
 plt.title("Ridge Fisher ($\lambda=%.1f$)" % 10)
 
 '''
+Penalized Logistic regression
+=============================
+'''
+
+# Dataset
+n_samples, n_features = 100, 2
+mean0, mean1 = np.array([0, 0]), np.array([0, 2])
+Cov = np.array([[1, .8],[.8, 1]])
+np.random.seed(42)
+X0 = np.random.multivariate_normal(mean0, Cov, n_samples)
+X1 = np.random.multivariate_normal(mean1, Cov, n_samples)
+X = np.vstack([X0, X1])
+y = np.array([0] * X0.shape[0] + [1] * X1.shape[0])
+
+'''
 Ridge
+-----
 '''
 from sklearn import linear_model
 logreg = linear_model.LogisticRegression(C=1)
@@ -277,6 +293,7 @@ print(logreg.coef_)
 
 '''
 Lasso
+-----
 '''
 from sklearn import linear_model
 logreg = linear_model.LogisticRegression(penalty='l1', C=.02)
@@ -289,3 +306,41 @@ y_pred_logreg = logreg.predict(X)
 errors =  y_pred_logreg != y
 print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_logreg)))
 print(logreg.coef_)
+
+
+'''
+Linear SVM
+=========
+'''
+
+'''
+Ridge
+-----
+'''
+from sklearn import svm
+
+svmlin = svm.LinearSVC()
+# Remark: by default LinearSVC uses squared_hinge as loss
+svmlin.fit(X, y)
+y_pred_svmlin = svmlin.predict(X)
+
+errors =  y_pred_svmlin != y
+print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_svmlin)))
+print(svmlin.coef_)
+
+'''
+Lasso
+-----
+'''
+
+from sklearn import svm
+
+svmlinl1 = svm.LinearSVC(penalty='l1', dual=False, C=.02)
+# Remark: by default LinearSVC uses squared_hinge as loss
+
+svmlinl1.fit(X, y)
+y_pred_svmlinl1 = svmlinl1.predict(X)
+
+errors =  y_pred_svmlinl1 != y
+print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_svmlinl1)))
+print(svmlinl1.coef_)
