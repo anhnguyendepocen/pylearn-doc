@@ -146,7 +146,7 @@ Linear discriminant analysis (LDA)
 '''
 
 import numpy as np
-from sklearn.lda import LDA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
 import matplotlib.pyplot as plt
 import pandas as pd
