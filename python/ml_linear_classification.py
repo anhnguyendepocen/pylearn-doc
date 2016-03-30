@@ -382,8 +382,8 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 
 # dataset
-X, y = datasets.make_classification(n_samples=1000,
-                           n_features=100,
+X, y = datasets.make_classification(n_samples=500,
+                           n_features=5,
                            n_informative=2,
                            n_redundant=0,
                            n_repeated=0,
@@ -405,13 +405,13 @@ lr_nointer = linear_model.LogisticRegression(C=1, fit_intercept=False)
 lr_nointer.fit(X, y)
 p, r, f, s = metrics.precision_recall_fscore_support(y, lr_nointer.predict(X))
 print("SPC: %.3f; SEN: %.3f" % tuple(r))
-print('# specificity > sensitivity')
+print('# specificity ~ sensitivity')
 
 plt.plot(lr_inter.decision_function(X), lr_nointer.decision_function(X), "o")
 print('# The decision function is highly correlated. The intercept has biased upwardly the decision function.')
 
 # Create imbalanced dataset, by subsampling sample of calss 0: keep only 10% of classe 0's samples and all classe 1's samples.
-n0 = int(np.rint(np.sum(y == 0) / 10))
+n0 = int(np.rint(np.sum(y == 0) / 20))
 subsample_idx = np.concatenate((np.where(y == 0)[0][:n0], np.where(y == 1)[0]))
 Ximb = X[subsample_idx, :]
 yimb = y[subsample_idx]
@@ -422,14 +422,14 @@ lr_inter = linear_model.LogisticRegression(C=1, fit_intercept=True)  # default v
 lr_inter.fit(Ximb, yimb)
 p, r, f, s = metrics.precision_recall_fscore_support(yimb, lr_inter.predict(Ximb))
 print("SPC: %.3f; SEN: %.3f" % tuple(r))
-print('#  sensitivity >> specificity')
+print('# sensitivity >> specificity')
 
 # No intercept
 lr_nointer = linear_model.LogisticRegression(C=1, fit_intercept=False)
 lr_nointer.fit(Ximb, yimb)
 p, r, f, s = metrics.precision_recall_fscore_support(yimb, lr_nointer.predict(Ximb))
 print("SPC: %.3f; SEN: %.3f" % tuple(r))
-print('''# Surprisingly, specificity > sensitivity. Nevertheless the prediction
+print('''# Specificity ~ sensitivity. Nevertheless the prediction
 disequilibrium has been reduced.
 This sugest that intercept should not be used with impbalced training dataset
 when we explicitely want balanced prediction.
