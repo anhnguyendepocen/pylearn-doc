@@ -266,46 +266,49 @@ Penalized Logistic regression
 '''
 
 # Dataset
-n_samples, n_features = 100, 2
-mean0, mean1 = np.array([0, 0]), np.array([0, 2])
-Cov = np.array([[1, .8],[.8, 1]])
-np.random.seed(42)
-X0 = np.random.multivariate_normal(mean0, Cov, n_samples)
-X1 = np.random.multivariate_normal(mean1, Cov, n_samples)
-X = np.vstack([X0, X1])
-y = np.array([0] * X0.shape[0] + [1] * X1.shape[0])
+# Build a classification task using 3 informative features
+from sklearn import datasets
+
+X, y = datasets.make_classification(n_samples=100,
+                           n_features=20,
+                           n_informative=3,
+                           n_redundant=0,
+                           n_repeated=0,
+                           n_classes=2,
+                           random_state=0,
+                           shuffle=False)
 
 '''
 Ridge
 -----
 '''
 from sklearn import linear_model
-logreg = linear_model.LogisticRegression(C=1)
+lr = linear_model.LogisticRegression(C=1)
 # This class implements regularized logistic regression. C is the Inverse of regularization strength.
 # Large value => no regularization.
 
-logreg.fit(X, y)
-y_pred_logreg = logreg.predict(X)
+lr.fit(X, y)
+y_pred_lr = lr.predict(X)
 
-errors =  y_pred_logreg != y
-print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_logreg)))
-print(logreg.coef_)
+errors =  y_pred_lr != y
+print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y)))
+print(lr.coef_)
 
 '''
 Lasso
 -----
 '''
 from sklearn import linear_model
-logreg = linear_model.LogisticRegression(penalty='l1', C=.02)
+lrl1 = linear_model.LogisticRegression(penalty='l1')
 # This class implements regularized logistic regression. C is the Inverse of regularization strength.
 # Large value => no regularization.
 
-logreg.fit(X, y)
-y_pred_logreg = logreg.predict(X)
+lrl1.fit(X, y)
+y_pred_lrl1 = lrl1.predict(X)
 
-errors =  y_pred_logreg != y
-print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_logreg)))
-print(logreg.coef_)
+errors =  y_pred_lrl1 != y
+print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_lrl1)))
+print(lrl1.coef_)
 
 
 '''
@@ -335,7 +338,7 @@ Lasso
 
 from sklearn import svm
 
-svmlinl1 = svm.LinearSVC(penalty='l1', dual=False, C=.02)
+svmlinl1 = svm.LinearSVC(penalty='l1', dual=False)
 # Remark: by default LinearSVC uses squared_hinge as loss
 
 svmlinl1.fit(X, y)
@@ -344,3 +347,112 @@ y_pred_svmlinl1 = svmlinl1.predict(X)
 errors =  y_pred_svmlinl1 != y
 print("Nb errors=%i, error rate=%.2f" % (errors.sum(), errors.sum() / len(y_pred_svmlinl1)))
 print(svmlinl1.coef_)
+
+'''
+Compare predictions of Logistic regression (LR) and their SVM counterparts, ie.: L2 LR vs L2 SVM and L1 LR vs L1 SVM
+- Compute the correlation between pairs of weights vectors.
+- Compare the predictions of two classifiers using their decision function: 
+    * Provide the generic form of the decision function for a linear classifier, assuming that their is no intercept.
+    * Compute the correlation decision function.
+    * Plot the pairwise decision function of the classifiers.
+- Conclude on the differences between Linear SVM and logistic regression.
+
+'''
+
+print(np.corrcoef(lr.coef_, svmlin.coef_))
+print(np.corrcoef(lrl1.coef_, svmlinl1.coef_))
+# The weights vectors are highly correlated
+
+print(np.corrcoef(lr.decision_function(X), svmlin.decision_function(X)))
+print(np.corrcoef(lrl1.decision_function(X), svmlinl1.decision_function(X)))
+# The decision function are highly correlated
+
+plt.plot(lr.decision_function(X), svmlin.decision_function(X), "o")
+plt.plot(lrl1.decision_function(X), svmlinl1.decision_function(X), "o")
+
+
+'''
+Imbalanced classes
+==================
+'''
+import numpy as np
+from sklearn import linear_model
+from sklearn import datasets
+from sklearn import metrics
+import matplotlib.pyplot as plt
+
+# dataset
+X, y = datasets.make_classification(n_samples=1000,
+                           n_features=100,
+                           n_informative=2,
+                           n_redundant=0,
+                           n_repeated=0,
+                           n_classes=2,
+                           random_state=1,
+                           shuffle=False)
+
+print(*["#samples of class %i = %i;" % (lev, np.sum(y == lev)) for lev in np.unique(y)])
+
+# With intercept
+lr_inter = linear_model.LogisticRegression(C=1, fit_intercept=True)  # default value
+lr_inter.fit(X, y)
+p, r, f, s = metrics.precision_recall_fscore_support(y, lr_inter.predict(X))
+print("SPC: %.3f; SEN: %.3f" % tuple(r))
+print('# The predictions are balanced in sensitivity and specificity')
+
+# No intercept
+lr_nointer = linear_model.LogisticRegression(C=1, fit_intercept=False)
+lr_nointer.fit(X, y)
+p, r, f, s = metrics.precision_recall_fscore_support(y, lr_nointer.predict(X))
+print("SPC: %.3f; SEN: %.3f" % tuple(r))
+print('# specificity > sensitivity')
+
+plt.plot(lr_inter.decision_function(X), lr_nointer.decision_function(X), "o")
+print('# The decision function is highly correlated. The intercept has biased upwardly the decision function.')
+
+# Create imbalanced dataset, by subsampling sample of calss 0: keep only 10% of classe 0's samples and all classe 1's samples.
+n0 = int(np.rint(np.sum(y == 0) / 10))
+subsample_idx = np.concatenate((np.where(y == 0)[0][:n0], np.where(y == 1)[0]))
+Ximb = X[subsample_idx, :]
+yimb = y[subsample_idx]
+print(*["#samples of class %i = %i;" % (lev, np.sum(yimb == lev)) for lev in np.unique(yimb)])
+
+# With intercept
+lr_inter = linear_model.LogisticRegression(C=1, fit_intercept=True)  # default value
+lr_inter.fit(Ximb, yimb)
+p, r, f, s = metrics.precision_recall_fscore_support(yimb, lr_inter.predict(Ximb))
+print("SPC: %.3f; SEN: %.3f" % tuple(r))
+print('#  sensitivity >> specificity')
+
+# No intercept
+lr_nointer = linear_model.LogisticRegression(C=1, fit_intercept=False)
+lr_nointer.fit(Ximb, yimb)
+p, r, f, s = metrics.precision_recall_fscore_support(yimb, lr_nointer.predict(Ximb))
+print("SPC: %.3f; SEN: %.3f" % tuple(r))
+print('''# Surprisingly, specificity > sensitivity. Nevertheless the prediction
+disequilibrium has been reduced.
+This sugest that intercept should not be used with impbalced training dataset
+when we explicitely want balanced prediction.
+''')
+
+
+plt.plot(lr_inter.decision_function(X), lr_nointer.decision_function(X), "o")
+print('''# The decision function is no more highly correlated. 
+The intercept has largly modified the learning process it is no more a 
+simple upward bias on the decision function.''')
+
+# Class reweighting + intercept
+lr_inter_reweight = linear_model.LogisticRegression(C=1, fit_intercept=True,
+                                                    class_weight="balanced")
+lr_inter_reweight.fit(Ximb, yimb)
+p, r, f, s = metrics.precision_recall_fscore_support(yimb, lr_inter_reweight.predict(Ximb))
+print("SPC: %.3f; SEN: %.3f" % tuple(r))
+print('# The predictions are balanced in sensitivity and specificity')
+
+# Class reweighting no intercept
+lr_nointer_reweight = linear_model.LogisticRegression(C=1,  fit_intercept=False,
+                                                    class_weight="balanced")
+lr_nointer_reweight.fit(Ximb, yimb)
+p, r, f, s = metrics.precision_recall_fscore_support(yimb, lr_nointer_reweight.predict(Ximb))
+print("SPC: %.3f; SEN: %.3f" % tuple(r))
+print('# The predictions are balanced in sensitivity and specificity')
