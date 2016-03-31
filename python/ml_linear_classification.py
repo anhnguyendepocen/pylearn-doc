@@ -2,7 +2,7 @@
 """
 Created on Wed Feb 17 18:23:23 2016
 
-@author: ed203246
+@author: edouard.duchesnay@cea.fr
 """
 
 '''
