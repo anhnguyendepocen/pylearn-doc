@@ -5,6 +5,9 @@ Resources
 pdf: https://sites.google.com/site/duchesnay/courses
 duchesnay@gmail.com
 
+- Practical Machine Learning Course Notes (in R) 
+
+        https://sux13.github.io/DataScienceSpCourseNotes/8_PREDMACHLEARN/Practical_Machine_Learning_Course_Notes.html
 
 ftp://ftp.cea.fr/pub/unati/people/educhesnay/pylearn_doc/MachineLearningPython.pdf
 
@@ -24,7 +27,6 @@ A gallery of interesting IPython Notebooks
 ------------------------------------------
 
 https://github.com/ipython/ipython/wiki/A-gallery-of-interesting-IPython-Notebooks
-
 
 IPython notebooks
 -----------------
